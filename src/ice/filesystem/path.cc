@@ -23,6 +23,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <ice/filesystem/path.h>
+#include <ice/date.h>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -42,6 +43,28 @@
 
 namespace ice {
 namespace filesystem {
+namespace {
+
+#ifdef _WIN32
+
+struct path_find_handle {
+  WIN32_FIND_DATA ffd = {};
+  HANDLE find = INVALID_HANDLE_VALUE;
+  path_find_handle(std::wstring path)
+  {
+    find = FindFirstFile((path + L"\\*").c_str(), &ffd);
+  }
+  ~path_find_handle()
+  {
+    if (find != INVALID_HANDLE_VALUE) {
+      FindClose(find);
+    }
+  }
+};
+
+#endif
+
+}  // namespace
 
 path::path() :
   m_type(native_path), m_absolute(false)
@@ -355,6 +378,57 @@ path path::getcwd()
   }
   return path(temp.c_str());
 #endif
+}
+
+void path::list(std::function<bool(const ice::filesystem::path& entry)> handler) const
+{
+  if (!is_directory()) {
+    throw std::runtime_error("filesystem: not a directory: " + str());
+  }
+#ifdef _WIN32
+  path_find_handle pfh(wstr());
+  if (pfh.find != INVALID_HANDLE_VALUE) {
+    do {
+      std::wstring name(pfh.ffd.cFileName);
+      if (name != L"." && name != L"..") {
+        if (!handler(*this / name)) {
+          break;
+        }
+      }
+    } while (FindNextFile(pfh.find, &pfh.ffd) != 0);
+  }
+#else
+#error TODO: Implement me!
+#endif
+}
+
+path::clock::time_point path::modified() const
+{
+#ifdef _MSC_VER
+  auto wfile = make_absolute().wstr();
+  auto handle = CreateFile(wfile.data(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+  if (handle == INVALID_HANDLE_VALUE) {
+    return{};
+  }
+
+  FILETIME ft = {};
+  auto ok = GetFileTime(handle, nullptr, nullptr, &ft);
+  CloseHandle(handle);
+
+  SYSTEMTIME st = {};
+  if (ok && FileTimeToSystemTime(&ft, &st)) {
+    auto day = ice::date::year(st.wYear) / ice::date::month(st.wMonth) / ice::date::day(st.wDay);
+    auto tod = std::chrono::hours(st.wHour) + std::chrono::minutes(st.wMinute) + std::chrono::seconds(st.wSecond);
+    return clock::time_point(ice::date::day_point(day)) + tod;
+  }
+#else
+  struct stat attrib;
+  if (stat(make_absolute().str().c_str(), &attrib) == 0) {
+    return clock::from_time_t(attrib.st_mtime);
+  }
+#endif
+  throw std::runtime_error("Could not get the last modified date/time.");
+  return{};
 }
 
 std::vector<std::string> path::tokenize(const std::string& string, const std::string& delim)

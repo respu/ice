@@ -23,6 +23,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#include <chrono>
+#include <functional>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -33,6 +35,8 @@ namespace filesystem {
 
 class path {
 public:
+  using clock = std::chrono::system_clock;
+
   enum path_type {
     windows_path = 0,
     posix_path = 1,
@@ -95,6 +99,10 @@ public:
   bool remove_file();
   bool resize_file(std::size_t target_length);
   static path getcwd();
+
+  void list(std::function<bool(const ice::filesystem::path& entry)> handler) const;
+
+  clock::time_point modified() const;
 
 protected:
   static std::vector<std::string> tokenize(const std::string& string, const std::string& delim);
