@@ -1,4 +1,5 @@
 build/
+lib/
 CMakeLists.txt
 ice.bat
 makefile

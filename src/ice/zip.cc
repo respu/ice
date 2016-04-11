@@ -1,5 +1,5 @@
 #include <ice/zip.h>
-#include <ice/date.h>
+#include <ice/chrono.h>
 #include <minizip/zip.h>
 #include <minizip/unzip.h>
 #ifdef _WIN32
@@ -24,11 +24,11 @@ public:
     if (!file) {
       throw std::runtime_error("zip: file error");
     }
-    auto dp = std::chrono::floor<ice::date::days>(zip_file.tp);
+    auto dp = std::chrono::floor<ice::chrono::days>(zip_file.tp);
     auto tp = zip_file.tp - dp;
 
-    auto date = ice::date::year_month_day(dp);
-    auto time = ice::date::make_time(tp);
+    auto date = ice::chrono::year_month_day(dp);
+    auto time = ice::chrono::make_time(tp);
 
     zip_fileinfo info = {};
     info.dosDate = 0;
@@ -205,7 +205,7 @@ void unzip::list(std::function<bool(const zip_file& file)> handler) const
     }
     file.name.resize(info.size_filename);
     file.size = info.uncompressed_size;
-    ice::date::day_point dp = ice::date::year(info.tmu_date.tm_year) / ice::date::month(info.tmu_date.tm_mon + 1) / ice::date::day(info.tmu_date.tm_mday);
+    ice::chrono::day_point dp = ice::chrono::year(info.tmu_date.tm_year) / ice::chrono::month(info.tmu_date.tm_mon + 1) / ice::chrono::day(info.tmu_date.tm_mday);
     file.tp = dp + std::chrono::hours(info.tmu_date.tm_hour) + std::chrono::minutes(info.tmu_date.tm_min) + std::chrono::seconds(info.tmu_date.tm_sec);
     if (info.size_filename > 0) {
       if (unzGetCurrentFileInfo(file_, &info, &file.name[0], info.size_filename, nullptr, 0, nullptr, 0) != UNZ_OK) {

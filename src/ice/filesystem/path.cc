@@ -23,7 +23,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <ice/filesystem/path.h>
-#include <ice/date.h>
+#include <ice/chrono.h>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -417,9 +417,9 @@ path::clock::time_point path::modified() const
 
   SYSTEMTIME st = {};
   if (ok && FileTimeToSystemTime(&ft, &st)) {
-    auto day = ice::date::year(st.wYear) / ice::date::month(st.wMonth) / ice::date::day(st.wDay);
+    auto day = ice::chrono::year(st.wYear) / ice::chrono::month(st.wMonth) / ice::chrono::day(st.wDay);
     auto tod = std::chrono::hours(st.wHour) + std::chrono::minutes(st.wMinute) + std::chrono::seconds(st.wSecond);
-    return clock::time_point(ice::date::day_point(day)) + tod;
+    return clock::time_point(ice::chrono::day_point(day)) + tod;
   }
 #else
   struct stat attrib;
