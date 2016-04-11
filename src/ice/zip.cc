@@ -212,6 +212,11 @@ void unzip::list(std::function<bool(const zip_file& file)> handler) const
         throw std::runtime_error("unzip: file info error");
       }
     }
+    if (file.size == 0 && !file.name.empty() && file.name.at(file.name.size() - 1) == '/') {
+      file.directory = true;
+    } else {
+      file.directory = false;
+    }
     if (!handler(file)) {
       break;
     }

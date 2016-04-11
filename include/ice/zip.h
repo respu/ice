@@ -7,10 +7,10 @@
 namespace ice {
 
 struct zip_file {
-  using time_point = std::chrono::system_clock::time_point;
   std::string name;
   std::size_t size;
-  time_point tp;
+  std::chrono::system_clock::time_point tp;
+  bool directory;
 };
 
 class zip {

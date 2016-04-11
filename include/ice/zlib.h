@@ -14,7 +14,7 @@ enum class format {
   zlib      // zlib header and trailer
 };
 
-using handler = std::function<void(const std::uint8_t* data, std::size_t size)>;
+using handler = std::function<bool(const std::uint8_t* data, std::size_t size)>;
 
 class inflate {
 public:

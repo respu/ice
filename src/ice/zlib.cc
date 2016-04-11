@@ -103,7 +103,9 @@ void inflate::process(const std::uint8_t* data, std::size_t size, bool finish, z
     }
 
     if (inflate_size > 0) {
-      handler(buffer.data(), inflate_size);
+      if (!handler(buffer.data(), inflate_size)) {
+        break;
+      }
     }
   } while (ret != Z_STREAM_END && stream_->avail_in > 0);
 
@@ -212,7 +214,9 @@ void deflate::process(const std::uint8_t* data, std::size_t size, bool finish, z
     }
 
     if (deflate_size > 0) {
-      handler(buffer.data(), deflate_size);
+      if (!handler(buffer.data(), deflate_size)) {
+        break;
+      }
     }
   } while (ret != Z_STREAM_END);
 
