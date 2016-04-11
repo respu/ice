@@ -1,97 +1,76 @@
 #include <ice/uuid.h>
+#include <ice/giant.h>
 #include <openssl/rand.h>
 #include <algorithm>
 #include <stdexcept>
 #include <cstdio>
 
+// Number of bytes in a formatted UUID string without the terminating character.
+#define UUID_FORMAT_SIZE (8 + 1 + 4 + 1 + 4 + 1 + 4 + 1 + 12)
+
+// Format for sscanf and snprintf.
+#define UUID_FORMAT "%08x-%04hx-%04hx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx"
+
+// Number of elements that have to be parsed/formatted by sscanf and snprintf.
+#define UUID_FORMAT_COUNT 11
+
 namespace ice {
 
-uuid::uuid(const std::string& buffer)
+uuid::uuid(const std::string& str)
 {
-  str(buffer);
+  auto count = std::sscanf(str.c_str(), UUID_FORMAT,
+    &tl, &tm, &thv, &csr, &csl, &n[0], &n[1], &n[2], &n[3], &n[4], &n[5]);
+  if (count != UUID_FORMAT_COUNT) {
+    throw std::runtime_error("uuid: format error");
+  }
+}
+
+uuid::uuid(const data_type& data)
+{
+  auto beg = reinterpret_cast<std::uint8_t*>(this);
+  std::copy(data.begin(), data.end(), beg);
+  tl  = giant::letoh(tl);
+  tm  = giant::letoh(tm);
+  thv = giant::letoh(thv);
 }
 
 std::string uuid::str() const
 {
-  std::string buffer;
-  buffer.resize(40);
-  auto size = std::snprintf(&buffer[0], buffer.size(), "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-    time_low, time_mid, time_hi_and_version, clk_seq_hi_res, clk_seq_low,
-    node[0], node[1], node[2], node[3], node[4], node[5]);
-  if (size < 0) {
-    throw std::runtime_error("uuid: buffer error");
+  std::string str;
+  str.resize(UUID_FORMAT_SIZE + 1);
+  auto size = std::snprintf(&str[0], UUID_FORMAT_SIZE + 1, UUID_FORMAT,
+    tl, tm, thv, csr, csl, n[0], n[1], n[2], n[3], n[4], n[5]);
+  if (size != UUID_FORMAT_SIZE) {
+    throw std::runtime_error("uuid: format size error");
   }
-  buffer.resize(static_cast<std::size_t>(size));
-  return buffer;
+  str.resize(static_cast<std::size_t>(size));
+  return str;
 }
 
-void uuid::str(const std::string& buffer)
+uuid::data_type uuid::data() const
 {
-  ice::uuid uuid;
-  unsigned int data[11];
-  auto count = std::sscanf(buffer.c_str(), "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-    &data[0], &data[1], &data[2], &data[3], &data[4], &data[5], &data[6], &data[7], &data[8], &data[9], &data[10]);
-  if (count != 11) {
-    throw std::runtime_error("uuid: format error");
-  }
-  time_low = static_cast<std::uint32_t>(data[0]);
-  time_mid = static_cast<std::uint16_t>(data[1]);
-  time_hi_and_version = static_cast<std::uint16_t>(data[2]);
-  clk_seq_hi_res = static_cast<std::uint8_t>(data[3]);
-  clk_seq_low = static_cast<std::uint8_t>(data[4]);
-  node[0] = static_cast<std::uint8_t>(data[5]);
-  node[1] = static_cast<std::uint8_t>(data[6]);
-  node[2] = static_cast<std::uint8_t>(data[7]);
-  node[3] = static_cast<std::uint8_t>(data[8]);
-  node[4] = static_cast<std::uint8_t>(data[9]);
-  node[5] = static_cast<std::uint8_t>(data[10]);
+  auto uuid = *this;
+  uuid.tl  = giant::htole(uuid.tl);
+  uuid.tm  = giant::htole(uuid.tm);
+  uuid.thv = giant::htole(uuid.thv);
+  data_type data;
+  auto beg = reinterpret_cast<const std::uint8_t*>(&uuid);
+  std::copy(beg, beg + data.size(), data.begin());
+  return data;
 }
 
 uuid uuid::generate()
 {
-  union uuid_data {
-    struct {
-      std::uint32_t time_low;
-      std::uint16_t time_mid;
-      std::uint16_t time_hi_and_version;
-      std::uint8_t clk_seq_hi_res;
-      std::uint8_t clk_seq_low;
-      std::uint8_t node[6];
-    };
-    uint8_t rnd[16];
-    uuid_data() {}
-  } data;
-  
-  if (!RAND_bytes(data.rnd, sizeof(data))) {
+  ice::uuid uuid;
+  if (!RAND_bytes(reinterpret_cast<std::uint8_t*>(&uuid), sizeof(uuid))) {
     throw std::runtime_error("uuid: random bytes error");
   }
 
-  // RFC-4122 Section 4.2
-  data.clk_seq_hi_res = static_cast<uint8_t>((data.clk_seq_hi_res & 0x3F) | 0x80);
-  data.time_hi_and_version = static_cast<uint16_t>((data.time_hi_and_version & 0x0FFF) | 0x4000);
-
-  ice::uuid uuid;
-  uuid.time_low = data.time_low;
-  uuid.time_mid = data.time_mid;
-  uuid.time_hi_and_version = data.time_hi_and_version;
-  uuid.clk_seq_hi_res = data.clk_seq_hi_res;
-  uuid.clk_seq_low = data.clk_seq_low;
-  std::copy(data.node, data.node + sizeof(data.node), uuid.node.begin());
+  // Set the UUID version according to RFC-4122 (Section 4.2).
+  uuid.thv = static_cast<decltype(uuid.thv)>((uuid.thv & 0x0FFF) | 0x4000);
+  uuid.csr = static_cast<decltype(uuid.csr)>((uuid.csr & 0x3F) | 0x80);
 
   return uuid;
-}
-
-std::ostream& operator<<(std::ostream& os, const ice::uuid& uuid)
-{
-  std::array<char, 40> buffer;
-  auto size = snprintf(buffer.data(), buffer.size(), "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-    uuid.time_low, uuid.time_mid, uuid.time_hi_and_version, uuid.clk_seq_hi_res, uuid.clk_seq_low,
-    uuid.node[0], uuid.node[1], uuid.node[2], uuid.node[3], uuid.node[4], uuid.node[5]);
-  if (size < 0 || size >= buffer.size()) {
-    throw std::runtime_error("uuid: buffer error");
-  }
-  buffer[size] = '\0';
-  return os << buffer.data();
 }
 
 }  // namespace ice
