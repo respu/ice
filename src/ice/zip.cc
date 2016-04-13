@@ -1,7 +1,7 @@
 #include <ice/zip.h>
 #include <ice/chrono.h>
-#include <minizip/zip.h>
 #include <minizip/unzip.h>
+#include <minizip/zip.h>
 #ifdef _WIN32
 #include <minizip/iowin32.h>
 #else
@@ -11,8 +11,6 @@
 #include <array>
 #include <limits>
 #include <stdexcept>
-
-#include <ice/log.h>
 
 namespace ice {
 namespace {

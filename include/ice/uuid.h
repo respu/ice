@@ -46,6 +46,9 @@ struct uuid {
 
   // Generates a random UUID (version 4).
   static uuid generate();
+
+  // Checks if the given string is a UUID.
+  bool check(const std::string& str);
 };
 
 inline constexpr bool operator==(const ice::uuid& a, const ice::uuid& b)

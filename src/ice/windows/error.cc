@@ -1,6 +1,8 @@
 #include <ice/windows/error.h>
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <cerrno>
 #endif
 #include <string>
 
@@ -44,7 +46,7 @@ std::error_code make_error()
 #ifdef _WIN32
   return make_error(GetLastError());
 #else
-  return make_error(0);
+  return make_error(errno);
 #endif
 }
 

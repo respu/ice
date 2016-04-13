@@ -142,9 +142,24 @@ void stop(clock::duration timeout)
   g_logger().stop(std::move(timeout));
 }
 
-void write(ice::log::message message)
+stream::stream(log::severity severity) :
+  std::stringbuf(), std::ostream(this), severity_(severity)
+{}
+
+stream::~stream()
 {
-  g_logger().write(std::move(message));
+  try {
+    ice::log::message message = {
+      severity_, std::move(timestamp_), str()
+    };
+    auto pos = message.text.find_last_not_of(" \t\n\v\f\r");
+    if (pos != std::string::npos) {
+      message.text.erase(pos + 1);
+    }
+    g_logger().write(std::move(message));
+  }
+  catch (...) {
+  }
 }
 
 void add(std::shared_ptr<ice::log::sink> sink)

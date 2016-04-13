@@ -1,7 +1,7 @@
 #pragma once
 #include <initializer_list>
-#include <utility>
 #include <type_traits>
+#include <utility>
 #include <vector>
 #include <cstdint>
 

@@ -38,17 +38,10 @@ void start();
 // Stops the logging thread when all messages are processed or the timeout is eached.
 void stop(clock::duration timeout = std::chrono::seconds(0));
 
-// Passes the message to added sinks on the logging thead.
-void write(ice::log::message message);
-
 // Log stream convenience class for creating and writing log messages.
-class stream {
+class stream : public std::stringbuf, public std::ostream {
 public:
-  using manipulator = std::ostream& (*)(std::ostream&);
-
-  stream(log::severity severity) :
-    severity_(severity)
-  {}
+  stream(log::severity severity);
 
   stream(stream&& other) = default;
   stream(const stream& other) = delete;
@@ -56,43 +49,11 @@ public:
   stream& operator=(stream&& other) = default;
   stream& operator=(const stream& other) = delete;
 
-  virtual ~stream()
-  {
-    try {
-      ice::log::message message = {
-        severity_, std::move(timestamp_), oss_.str()
-      };
-      auto pos = message.text.find_last_not_of(" \t\n\v\f\r");
-      if (pos != std::string::npos) {
-        message.text.erase(pos + 1);
-      }
-      write(std::move(message));
-    }
-    catch (...) {}
-  }
-
-  template<typename V>
-  stream& operator<<(V&& v)
-  {
-    oss_ << std::forward<V>(v);
-    return *this;
-  }
-
-  stream& operator<<(manipulator manipulator)
-  {
-    manipulator(oss_);
-    return *this;
-  }
-
-  std::string str() const
-  {
-    return oss_.str();
-  }
+  virtual ~stream();
 
 private:
-  timestamp timestamp_ = clock::now();
   log::severity severity_;
-  std::ostringstream oss_;
+  timestamp timestamp_ = clock::now();
 };
 
 class emergency : public stream {

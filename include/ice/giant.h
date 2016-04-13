@@ -10,9 +10,9 @@
 #ifndef GIANT_HPP_HEADER
 #define GIANT_HPP_HEADER
 
-#include <cassert>
 #include <algorithm>
 #include <type_traits>
+#include <cassert>
 
 #if defined (__GLIBC__)
 #   include <endian.h>

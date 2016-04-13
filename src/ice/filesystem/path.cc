@@ -24,10 +24,10 @@
 
 #include <ice/filesystem/path.h>
 #include <ice/chrono.h>
+#include <cctype>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
-#include <cctype>
 
 #if defined(_WIN32)
 #include <windows.h>

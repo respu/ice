@@ -1,4 +1,5 @@
 build/
+build.tmp/
 lib/
 CMakeLists.txt
 ice.bat

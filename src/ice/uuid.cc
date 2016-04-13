@@ -73,4 +73,30 @@ uuid uuid::generate()
   return uuid;
 }
 
+bool uuid::check(const std::string& str)
+{
+  if (str.size() != 36) {
+    return false;
+  }
+  for (std::size_t i = 0, size = str.size(); i < size; i++) {
+    auto c = str[i];
+    switch (i) {
+    case 8:
+    case 13:
+    case 18:
+    case 23:
+      if (c != '-') {
+        return false;
+      }
+      break;
+    default:
+      if ((c < '0' || c > '9') && (c < 'a' || c > 'f')) {
+        return false;
+      }
+      break;
+    }
+  }
+  return true;
+}
+
 }  // namespace ice

@@ -28,8 +28,8 @@
 #include <cerrno>
 #include <climits>
 #include <cmath>
-#include <cstdarg>
 #include <cstring>
+#include <cstdarg>
 
 #if defined(_WIN32) && defined(__MINGW32__)
 # include <cstring>
