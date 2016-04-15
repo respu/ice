@@ -62,45 +62,22 @@ private:
   timestamp timestamp_ = clock::now();
 };
 
-class emergency : public stream {
+template<log::severity severity>
+class stream_proxy : public stream {
 public:
-  emergency() : stream(severity::emergency) {}
+  stream_proxy() : stream(severity) {}
+  stream_proxy(stream_proxy&& other) = default;
+  stream_proxy& operator=(stream_proxy&& other) = default;
 };
 
-class alert : public stream {
-public:
-  alert() : stream(severity::alert) {}
-};
-
-class critical : public stream {
-public:
-  critical() : stream(severity::critical) {}
-};
-
-class error : public stream {
-public:
-  error() : stream(severity::error) {}
-};
-
-class warning : public stream {
-public:
-  warning() : stream(severity::warning) {}
-};
-
-class notice : public stream {
-public:
-  notice() : stream(severity::notice) {}
-};
-
-class info : public stream {
-public:
-  info() : stream(severity::info) {}
-};
-
-class debug : public stream {
-public:
-  debug() : stream(severity::debug) {}
-};
+using emergency = stream_proxy<severity::emergency>;
+using alert = stream_proxy<severity::alert>;
+using critical = stream_proxy<severity::critical>;
+using error = stream_proxy<severity::error>;
+using warning = stream_proxy<severity::warning>;
+using notice = stream_proxy<severity::notice>;
+using info = stream_proxy<severity::info>;
+using debug = stream_proxy<severity::debug>;
 
 // Log sink interface.
 class sink {
