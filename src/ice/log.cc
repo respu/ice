@@ -21,6 +21,8 @@ HANDLE windows_cout = GetStdHandle(STD_OUTPUT_HANDLE);
 HANDLE windows_cerr = GetStdHandle(STD_ERROR_HANDLE);
 #endif
 
+log::severity g_threshold = log::severity::debug;
+
 class logger {
 public:
   ~logger()
@@ -142,6 +144,16 @@ void stop(clock::duration timeout)
   g_logger().stop(std::move(timeout));
 }
 
+void threshold(log::severity threshold)
+{
+  g_threshold = threshold;
+}
+
+log::severity threshold()
+{
+  return g_threshold;
+}
+
 stream::stream(log::severity severity) :
   std::stringbuf(), std::ostream(this), severity_(severity)
 {}
@@ -149,14 +161,18 @@ stream::stream(log::severity severity) :
 stream::~stream()
 {
   try {
-    ice::log::message message = {
-      severity_, std::move(timestamp_), str()
-    };
-    auto pos = message.text.find_last_not_of(" \t\n\v\f\r");
-    if (pos != std::string::npos) {
-      message.text.erase(pos + 1);
+    if (severity_ <= g_threshold) {
+      ice::log::message message = {
+        severity_, std::move(timestamp_), str()
+      };
+      auto pos = message.text.find_last_not_of(" \t\n\v\f\r");
+      if (pos != std::string::npos) {
+        message.text.erase(pos + 1);
+      }
+      if (!message.text.empty()) {
+        g_logger().write(std::move(message));
+      }
     }
-    g_logger().write(std::move(message));
   }
   catch (...) {
   }

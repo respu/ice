@@ -38,6 +38,12 @@ void start();
 // Stops the logging thread when all messages are processed or the timeout is eached.
 void stop(clock::duration timeout = std::chrono::seconds(0));
 
+// Sets the default severity threshold.
+void threshold(log::severity threshold);
+
+// Returns the default severity threshold.
+log::severity threshold();
+
 // Log stream convenience class for creating and writing log messages.
 class stream : public std::stringbuf, public std::ostream {
 public:
