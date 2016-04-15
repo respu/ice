@@ -1,10 +1,12 @@
 #include <ice/log.h>
+#include <ice/filesystem/path.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif
 #include <atomic>
 #include <condition_variable>
 #include <deque>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <mutex>
@@ -22,6 +24,96 @@ HANDLE windows_cerr = GetStdHandle(STD_ERROR_HANDLE);
 #endif
 
 log::severity g_threshold = log::severity::debug;
+
+std::ostream& format_timestamp(std::ostream& os, const log::timestamp timestamp, bool milliseconds)
+{
+  auto time = std::chrono::system_clock::to_time_t(timestamp);
+  tm tm = { 0 };
+#ifndef _WIN32
+  localtime_r(&time, &tm);
+#else
+  localtime_s(&tm, &time);
+#endif
+  os << std::put_time(&tm, "%F %T");
+  if (milliseconds) {
+    auto tsp = timestamp.time_since_epoch();
+    auto s = std::chrono::duration_cast<std::chrono::seconds>(tsp).count();
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(tsp).count() - (s * 1000);
+    os << '.' << std::setfill('0') << std::setw(3) << ms;
+  }
+  return os;
+}
+
+std::ostream& format_severity(std::ostream& os, const log::severity severity)
+{
+  switch (severity) {
+  case log::severity::emergency: return os << "emergency"; break;
+  case log::severity::alert:     return os << "alert    "; break;
+  case log::severity::critical:  return os << "critical "; break;
+  case log::severity::error:     return os << "error    "; break;
+  case log::severity::warning:   return os << "warning  "; break;
+  case log::severity::notice:    return os << "notice   "; break;
+  case log::severity::info:      return os << "info     "; break;
+  case log::severity::debug:     return os << "debug    "; break;
+  }
+  return os << "unknown  ";
+}
+
+#ifndef _WIN32
+
+void set_color(std::ostream& os, log::severity severity)
+{
+  // #!/bin/sh
+  // for x in 0 1 4 5 7 8; do
+  //   for i in `seq 30 37`; do
+  //     for a in `seq 40 47`; do
+  //       echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "
+  //     done
+  //     echo
+  //   done
+  // done
+  switch (severity) {
+  case log::severity::emergency: os << "\e[0;36m"; break;  // cyan
+  case log::severity::alert:     os << "\e[0;34m"; break;  // blue
+  case log::severity::critical:  os << "\e[0;35m"; break;  // magenta
+  case log::severity::error:     os << "\e[0;31m"; break;  // red
+  case log::severity::warning:   os << "\e[0;33m"; break;  // yellow
+  case log::severity::notice:    os << "\e[0;32m"; break;  // green
+  case log::severity::info:      os << "\e[0;37m"; break;  // white
+  case log::severity::debug:     os << "\e[1;30m"; break;  // grey (bold)
+  }
+}
+
+void reset_color(std::ostream& os)
+{
+  os << "\e[0m";
+}
+
+#else
+
+WORD set_color(HANDLE windows_os, log::severity severity)
+{
+  CONSOLE_SCREEN_BUFFER_INFO console_info = {};
+  GetConsoleScreenBufferInfo(windows_os, &console_info);
+  switch (severity) {
+  case log::severity::emergency: SetConsoleTextAttribute(windows_os, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;  // cyan
+  case log::severity::alert:     SetConsoleTextAttribute(windows_os, FOREGROUND_BLUE | FOREGROUND_INTENSITY); break;  // blue
+  case log::severity::critical:  SetConsoleTextAttribute(windows_os, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY); break;  // magenta
+  case log::severity::error:     SetConsoleTextAttribute(windows_os, FOREGROUND_RED | FOREGROUND_INTENSITY); break;  // red
+  case log::severity::warning:   SetConsoleTextAttribute(windows_os, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;  // yellow
+  case log::severity::notice:    SetConsoleTextAttribute(windows_os, FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;  // green
+  case log::severity::info:      SetConsoleTextAttribute(windows_os, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); break;  // white
+  case log::severity::debug:     SetConsoleTextAttribute(windows_os, FOREGROUND_INTENSITY); break;  // grey (bold)
+  }
+  return console_info.wAttributes;
+}
+
+void reset_color(HANDLE windows_os, WORD attributes)
+{
+  SetConsoleTextAttribute(windows_os, attributes);
+}
+
+#endif
 
 class logger {
 public:
@@ -187,142 +279,100 @@ void remove(std::shared_ptr<ice::log::sink> sink)
   g_logger().remove(std::move(sink));
 }
 
-console::console(log::severity severity) :
-  severity_(severity)
+console::console(log::severity severity, bool milliseconds) :
+  severity_(severity), milliseconds_(milliseconds)
 {}
-
-#ifndef _WIN32
-
-void set_color(std::ostream& os, log::severity severity)
-{
-  // #!/bin/sh
-  // for x in 0 1 4 5 7 8; do
-  //   for i in `seq 30 37`; do
-  //     for a in `seq 40 47`; do
-  //       echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "
-  //     done
-  //     echo
-  //   done
-  // done
-  switch (severity) {
-  case log::severity::emergency: os << "\e[0;36m"; break;  // cyan
-  case log::severity::alert:     os << "\e[0;34m"; break;  // blue
-  case log::severity::critical:  os << "\e[0;35m"; break;  // magenta
-  case log::severity::error:     os << "\e[0;31m"; break;  // red
-  case log::severity::warning:   os << "\e[0;33m"; break;  // yellow
-  case log::severity::notice:    os << "\e[0;32m"; break;  // green
-  case log::severity::info:      os << "\e[0;37m"; break;  // white
-  case log::severity::debug:     os << "\e[1;30m"; break;  // grey (bold)
-  }
-}
-
-void reset_color(std::ostream& os)
-{
-  os << "\e[0m";
-}
-
-#else
-
-WORD set_color(HANDLE windows_os, log::severity severity)
-{
-  CONSOLE_SCREEN_BUFFER_INFO console_info = {};
-  GetConsoleScreenBufferInfo(windows_os, &console_info);
-  switch (severity) {
-  case log::severity::emergency: SetConsoleTextAttribute(windows_os, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;  // cyan
-  case log::severity::alert:     SetConsoleTextAttribute(windows_os, FOREGROUND_BLUE | FOREGROUND_INTENSITY); break;  // blue
-  case log::severity::critical:  SetConsoleTextAttribute(windows_os, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_INTENSITY); break;  // magenta
-  case log::severity::error:     SetConsoleTextAttribute(windows_os, FOREGROUND_RED | FOREGROUND_INTENSITY); break;  // red
-  case log::severity::warning:   SetConsoleTextAttribute(windows_os, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;  // yellow
-  case log::severity::notice:    SetConsoleTextAttribute(windows_os, FOREGROUND_GREEN | FOREGROUND_INTENSITY); break;  // green
-  case log::severity::info:      SetConsoleTextAttribute(windows_os, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); break;  // white
-  case log::severity::debug:     SetConsoleTextAttribute(windows_os, FOREGROUND_INTENSITY); break;  // grey (bold)
-  }
-  return console_info.wAttributes;
-}
-
-void reset_color(HANDLE windows_os, WORD attributes)
-{
-  SetConsoleTextAttribute(windows_os, attributes);
-}
-
-#endif
 
 void console::write(const ice::log::message& message)
 {
-  if (message.severity <= severity_) {
-    std::ostream& os = message.severity < log::severity::warning ? std::cerr : std::cout;
+  if (message.severity > severity_) {
+    return;
+  }
+  std::ostream& os = message.severity < log::severity::warning ? std::cerr : std::cout;
 
 #ifdef _WIN32
-    auto windows_os = message.severity < log::severity::warning ? windows_cerr : windows_cout;
+  auto windows_os = message.severity < log::severity::warning ? windows_cerr : windows_cout;
 #endif
 
-    // Print the date and time.
-    auto time = std::chrono::system_clock::to_time_t(message.timestamp);
-    tm tm = { 0 };
+  // Print the timestamp.
+  format_timestamp(os, message.timestamp, milliseconds_);
+
+  // Print the severity opening bracket.
+  os << " [";
+
+  // Switch color.
 #ifndef _WIN32
-    localtime_r(&time, &tm);
+  set_color(os, message.severity);
 #else
-    localtime_s(&tm, &time);
+  auto attributes = set_color(windows_os, message.severity);
 #endif
-    os << std::put_time(&tm, "%F %T");
 
-    // Print milliseconds.
-    auto tsp = message.timestamp.time_since_epoch();
-    auto s = std::chrono::duration_cast<std::chrono::seconds>(tsp).count();
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(tsp).count() - (s * 1000);
-    os << '.' << std::setfill('0') << std::setw(3) << ms << ' ';
+  // Print the severity.
+  format_severity(os, message.severity);
 
-    // Print the severity opening bracket.
-    os << '[';
-
-    // Switch color.
+  // Reset the color.
 #ifndef _WIN32
-    set_color(os, message.severity);
+  reset_color(os);
 #else
-    auto attributes = set_color(windows_os, message.severity);
+  reset_color(windows_os, attributes);
 #endif
 
-    // Print the severity.
-    switch (message.severity) {
-    case log::severity::emergency: os << "emergency"; break;
-    case log::severity::alert:     os << "alert    "; break;
-    case log::severity::critical:  os << "critical "; break;
-    case log::severity::error:     os << "error    "; break;
-    case log::severity::warning:   os << "warning  "; break;
-    case log::severity::notice:    os << "notice   "; break;
-    case log::severity::info:      os << "info     "; break;
-    case log::severity::debug:     os << "debug    "; break;
+  // Print the severity closing bracket.
+  os << "] ";
+
+  // Switch color.
+#ifndef _WIN32
+  set_color(os, message.severity);
+#else
+  attributes = set_color(windows_os, message.severity);
+#endif
+
+  // Print the message.
+  os << message.text;
+
+  // Reset the color.
+#ifndef _WIN32
+  reset_color(os);
+#else
+  reset_color(windows_os, attributes);
+#endif
+
+  // Print the endline sequence and flush the output.
+  os << std::endl;
+}
+
+class file::impl {
+public:
+  impl(const ice::filesystem::path& path) :
+#ifdef _WIN32
+    os_(path.wstr(), std::ios::binary)
+#else
+    os_(path.str(), std::ios::binary)
+#endif
+  {
+    if (!os_.good()) {
+      throw std::runtime_error("Could not open log file: " + path.str());
     }
+  }
 
-    // Reset the color.
-#ifndef _WIN32
-    reset_color(os);
-#else
-    reset_color(windows_os, attributes);
-#endif
+  void write(const log::message& message, bool milliseconds)
+  {
+    format_timestamp(os_, message.timestamp, milliseconds) << " [";
+    format_severity(os_, message.severity) << "] " << message.text << std::endl;
+  }
 
-    // Print the severity closing bracket.
-    os << "] ";
+private:
+  std::ofstream os_;
+};
 
-    // Switch color.
-#ifndef _WIN32
-    set_color(os, message.severity);
-#else
-    attributes = set_color(windows_os, message.severity);
-#endif
+file::file(const std::string& path, log::severity severity, bool milliseconds) :
+  impl_(std::make_unique<impl>(ice::filesystem::path(path))), severity_(severity), milliseconds_(milliseconds)
+{}
 
-    // Print the message.
-    os << message.text;
-
-    // Reset the color.
-#ifndef _WIN32
-    reset_color(os);
-#else
-    reset_color(windows_os, attributes);
-#endif
-
-    // Print the endline sequence.
-    os << std::endl;
+void file::write(const log::message& message)
+{
+  if (message.severity <= severity_) {
+    impl_->write(message, milliseconds_);
   }
 }
 

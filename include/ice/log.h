@@ -83,7 +83,7 @@ using debug = stream_proxy<severity::debug>;
 class sink {
 public:
   virtual ~sink() = default;
-  virtual void write(const log::message& message) = 0;
+  virtual void write(const ice::log::message& message) = 0;
 };
 
 // Adds the given log sink.
@@ -95,12 +95,23 @@ void remove(std::shared_ptr<ice::log::sink> sink);
 // Console output log sink.
 class console : public sink {
 public:
-  console(log::severity severity = log::severity::debug);
-
+  console(log::severity severity = log::severity::debug, bool milliseconds = true);
   void write(const log::message& message) override;
-
 private:
   log::severity severity_;
+  bool milliseconds_;
+};
+
+// File output log sink.
+class file : public sink {
+public:
+  file(const std::string& path, log::severity severity = log::severity::debug, bool milliseconds = true);
+  void write(const log::message& message) override;
+private:
+  class impl;
+  std::unique_ptr<impl> impl_;
+  log::severity severity_;
+  bool milliseconds_;
 };
 
 }  // namespace log
