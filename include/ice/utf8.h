@@ -33,17 +33,41 @@ DEALINGS IN THE SOFTWARE.
 
 namespace ice {
 
-// Converts an UTF-8 string to a UTF-16 string. Throws on error.
-std::string convert(const ice::u16string_view src);
+// Converts a UTF-16 string to a UTF-8 string. Throws on error.
+std::string u16to8(const ice::u16string_view src);
+
+// Converts a UTF-16 string to a UTF-8 string. Stops on error.
+std::string u16to8(const ice::u16string_view src, std::error_code& ec);
+
+// Converts a UTF-8 string to a UTF-16 string. Throws on error.
+std::u16string u8to16(const ice::string_view src);
 
 // Converts an UTF-8 string to a UTF-16 string. Stops on error.
-std::string convert(const ice::u16string_view src, std::error_code& ec);
+std::u16string u8to16(const ice::string_view src, std::error_code& ec);
 
-// Converts an UTF-16 string to a UTF-8 string. Throws on error.
-std::u16string convert(const ice::string_view src);
+// Converts a UTF-32 string to a UTF-8 string. Throws on error.
+std::string u32to8(const ice::u32string_view src);
 
-// Converts an UTF-16 string to a UTF-8 string. Stops on error.
-std::u16string convert(const ice::string_view src, std::error_code& ec);
+// Converts a UTF-32 string to a UTF-8 string. Stops on error.
+std::string u32to8(const ice::u32string_view src, std::error_code& ec);
+
+// Converts a UTF-8 string to a UTF-32 string. Throws on error.
+std::u32string u8to32(const ice::string_view src);
+
+// Converts an UTF-8 string to a UTF-32 string. Stops on error.
+std::u32string u8to32(const ice::string_view src, std::error_code& ec);
+
+// Converts a native string to a UTF-8 string. Throws on error.
+std::string convert(const ice::wstring_view src);
+
+// Converts a native string to a UTF-8 string. Stops on error.
+std::string convert(const ice::wstring_view src, std::error_code& ec);
+
+// Converts a UTF-8 string to a native string. Throws on error.
+std::wstring convert(const ice::string_view src);
+
+// Converts a UTF-8 string to a native string. Stops on error.
+std::wstring convert(const ice::string_view src, std::error_code& ec);
 
 // Returns true when the given string view contains a valid UTF-8 sequence.
 bool is_valid_utf8(ice::string_view str);

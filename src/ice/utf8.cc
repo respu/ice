@@ -86,32 +86,34 @@ std::uint32_t next(octet_iterator& it, octet_iterator end, std::error_code& ec)
   std::uint32_t cp = 0;
   auto err_code = utf8::internal::validate_next(it, end, cp);
   if (err_code != utf8::internal::UTF8_OK) {
-    ec = make_error(err_code);
-  }
-  switch (err_code) {
-  case utf8::internal::UTF8_OK:
-    break;
-  case utf8::internal::NOT_ENOUGH_ROOM:
-    ec = make_error(err_code);
-    break;
-  case utf8::internal::INVALID_LEAD:
-  case utf8::internal::INCOMPLETE_SEQUENCE:
-  case utf8::internal::OVERLONG_SEQUENCE:
-    ec = make_error(err_code, *it);
-    break;
-  case utf8::internal::INVALID_CODE_POINT:
-    ec = make_error(err_code, cp);
-    break;
+    switch (err_code) {
+    case utf8::internal::UTF8_OK:
+      break;
+    case utf8::internal::NOT_ENOUGH_ROOM:
+      ec = make_error(err_code);
+      break;
+    case utf8::internal::INVALID_LEAD:
+    case utf8::internal::INCOMPLETE_SEQUENCE:
+    case utf8::internal::OVERLONG_SEQUENCE:
+      ec = make_error(err_code, *it);
+      break;
+    case utf8::internal::INVALID_CODE_POINT:
+      ec = make_error(err_code, cp);
+      break;
+    default:
+      ec = make_error(err_code);
+      break;
+    }
   }
   return cp;
 }
 
 }  // namespace
 
-std::string convert(const ice::u16string_view src)
+std::string u16to8(const ice::u16string_view src)
 {
   std::error_code ec;
-  auto dst = convert(src, ec);
+  auto dst = u16to8(src, ec);
   if (ec) {
     throw ice::system_error(ec)
       << "Could not convert UTF-16 to UTF-8.";
@@ -119,14 +121,12 @@ std::string convert(const ice::u16string_view src)
   return dst;
 }
 
-std::string convert(const ice::u16string_view src, std::error_code& ec)
+std::string u16to8(const ice::u16string_view src, std::error_code& ec)
 {
   std::string dst;
-
   auto start = src.begin();
   auto end = src.end();
   auto result = std::back_inserter(dst);
-
   while (start != end) {
     std::uint32_t cp = utf8::internal::mask16(*start++);
     if (utf8::internal::is_lead_surrogate(cp)) {
@@ -153,27 +153,23 @@ std::string convert(const ice::u16string_view src, std::error_code& ec)
   return dst;
 }
 
-std::u16string convert(const ice::string_view src)
+std::u16string u8to16(const ice::string_view src)
 {
   std::error_code ec;
-  auto dst = convert(src, ec);
+  auto dst = u8to16(src, ec);
   if (ec) {
     throw ice::system_error(ec)
       << "Could not convert UTF-8 to UTF-16.";
   }
-
-  if (ec) { throw ice::system_error(ec) << "Could not convert UTF-8 to UTF-16."; }
   return dst;
 }
 
-std::u16string convert(const ice::string_view src, std::error_code& ec)
+std::u16string u8to16(const ice::string_view src, std::error_code& ec)
 {
   std::u16string dst;
-
   auto start = src.begin();
   auto end = src.end();
   auto result = std::back_inserter(dst);
-
   while (start != end) {
     std::uint32_t cp = next(start, end, ec);
     if (ec) {
@@ -187,6 +183,123 @@ std::u16string convert(const ice::string_view src, std::error_code& ec)
       *result++ = static_cast<uint16_t>(cp);
   }
   return dst;
+}
+
+std::string u32to8(const ice::u32string_view src)
+{
+  std::error_code ec;
+  auto dst = u32to8(src, ec);
+  if (ec) {
+    throw ice::system_error(ec)
+      << "Could not convert UTF-32 to UTF-8.";
+  }
+  return dst;
+}
+
+std::string u32to8(const ice::u32string_view src, std::error_code& ec)
+{
+  std::string dst;
+  auto start = src.begin();
+  auto end = src.end();
+  auto result = std::back_inserter(dst);
+  while (start != end) {
+    auto cp = *(start++);
+    if (!utf8::internal::is_code_point_valid(cp)) {
+      ec = make_error(utf8::internal::INVALID_CODE_POINT, static_cast<uint16_t>(cp));
+      break;
+    }
+    if (cp < 0x80) // one octet
+      *(result++) = static_cast<uint8_t>(cp);
+    else if (cp < 0x800) { // two octets
+      *(result++) = static_cast<uint8_t>((cp >> 6) | 0xc0);
+      *(result++) = static_cast<uint8_t>((cp & 0x3f) | 0x80);
+    } else if (cp < 0x10000) { // three octets
+      *(result++) = static_cast<uint8_t>((cp >> 12) | 0xe0);
+      *(result++) = static_cast<uint8_t>(((cp >> 6) & 0x3f) | 0x80);
+      *(result++) = static_cast<uint8_t>((cp & 0x3f) | 0x80);
+    } else { // four octets
+      *(result++) = static_cast<uint8_t>((cp >> 18) | 0xf0);
+      *(result++) = static_cast<uint8_t>(((cp >> 12) & 0x3f) | 0x80);
+      *(result++) = static_cast<uint8_t>(((cp >> 6) & 0x3f) | 0x80);
+      *(result++) = static_cast<uint8_t>((cp & 0x3f) | 0x80);
+    }
+  }
+  return dst;
+}
+
+std::u32string u8to32(const ice::string_view src)
+{
+  std::error_code ec;
+  auto dst = u8to32(src, ec);
+  if (ec) {
+    throw ice::system_error(ec)
+      << "Could not convert UTF-8 to UTF-16.";
+  }
+  return dst;
+}
+
+std::u32string u8to32(const ice::string_view src, std::error_code& ec)
+{
+  std::u32string dst;
+  auto start = src.begin();
+  auto end = src.end();
+  auto result = std::back_inserter(dst);
+  while (start != end) {
+    std::uint32_t cp = next(start, end, ec);
+    if (ec) {
+      return dst;
+    }
+    (*result++) = cp;
+  }
+  return dst;
+}
+
+
+std::string convert(const ice::wstring_view src)
+{
+  std::error_code ec;
+  auto dst = convert(src, ec);
+  if (ec) {
+    throw ice::system_error(ec)
+      << "Could not convert a native wide string to UTF-8.";
+  }
+  return dst;
+}
+
+std::string convert(const ice::wstring_view src, std::error_code& ec)
+{
+  auto size = sizeof(ice::wstring_view::value_type);
+  switch (size) {
+  case sizeof(char16_t): return u16to8({ reinterpret_cast<const char16_t*>(src.data()), src.size() });
+  case sizeof(char32_t): return u32to8({ reinterpret_cast<const char32_t*>(src.data()), src.size() });
+  case sizeof(char): return std::string(reinterpret_cast<const char*>(src.data()), src.size());
+  default: ec = std::make_error_code(std::errc::invalid_argument);
+  }
+  return std::string();
+}
+
+std::wstring convert(const ice::string_view src)
+{
+  std::error_code ec;
+  auto dst = convert(src, ec);
+  if (ec) {
+    throw ice::system_error(ec)
+      << "Could not convert UTF-8 to a native wide string.";
+  }
+  return dst;
+}
+
+std::wstring convert(const ice::string_view src, std::error_code& ec)
+{
+  // TODO: Write a new implementation that does not copy.
+  auto size = sizeof(ice::wstring_view::value_type);
+  switch (size) {
+  case sizeof(char16_t): return reinterpret_cast<const wchar_t*>(u8to16(src).data());
+  case sizeof(char32_t): return reinterpret_cast<const wchar_t*>(u8to32(src).data());
+  case sizeof(char) : return std::wstring(reinterpret_cast<const wchar_t*>(src.data()), src.size());
+  default: ec = std::make_error_code(std::errc::invalid_argument);
+  }
+  return std::wstring();
 }
 
 bool is_valid_utf8(ice::string_view str)
