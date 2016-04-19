@@ -666,7 +666,7 @@ value& parser::get()
 {
   if (value_.type() == type::number) {
     std::istringstream iss(buffer_);
-    double value = 0.0;
+    auto value = 0.0;
     //iss >> std::setprecision(std::numeric_limits<double>::max_digits10) >> value;
     iss >> value;
     value_ = value;

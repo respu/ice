@@ -25,7 +25,7 @@ public:
   template <typename T>
   explicit value(T&& value)
   {
-    json_traits<T>::assign(*this, std::forward<T>(value));
+    json_traits<std::remove_reference_t<T>>::assign(*this, std::forward<T>(value));
   }
 
   // Constructs a new array or object from an initializer list.
@@ -44,7 +44,7 @@ public:
   value& operator=(T&& value)
   {
     clear();
-    json_traits<T>::assign(*this, std::forward<T>(value));
+    json_traits<std::remove_reference_t<T>>::assign(*this, std::forward<T>(value));
     return *this;
   }
 

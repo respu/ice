@@ -42,11 +42,11 @@ value::value(std::initializer_list<value> list)
   }
   if (is_object) {
     for (auto& e : list) {
-      operator[](e[0].as_string()) = std::move(e[1]);
+      operator[](e[0].as_string()) = e[1];
     }
   } else {
     for (auto& e : list) {
-      append(std::move(e));
+      append(e);
     }
   }
 }
