@@ -11,7 +11,16 @@ namespace ice {
 template <typename T, typename V>
 struct json_traits<std::map<V, T>> {
   // Used by the 'ice::json::value' constructor and assignment operator.
-  static void assign(json::value& self, std::map<V, T> v)
+  static void assign(json::value& self, std::map<V, T>&& v)
+  {
+    self.reset(json::type::object);
+    for (auto& e : v) {
+      self[json::value(e.first).as<std::string>()] = std::move(e.second);
+    }
+  }
+
+  // Used by the 'ice::json::value' constructor and assignment operator.
+  static void assign(json::value& self, const std::map<V, T>& v)
   {
     self.reset(json::type::object);
     for (auto& e : v) {

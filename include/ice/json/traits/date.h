@@ -3,12 +3,14 @@
 #include <ice/json/value.h>
 #include <ice/date.h>
 
+// XXX This implementation should be redone with the tz.h header.
+
 namespace ice {
 namespace detail {
 
 template<typename T>
 struct date_traits {
-  static void assign(json::value& self, T v)
+  static void assign(json::value& self, const T& v)
   {
     self = ice::date::format(v);
   }
@@ -32,7 +34,7 @@ struct date_traits {
 
 template <typename Rep, typename Period>
 struct json_traits<std::chrono::duration<Rep, Period>> {
-  static void assign(json::value& self, std::chrono::duration<Rep, Period> v)
+  static void assign(json::value& self, const std::chrono::duration<Rep, Period>& v)
   {
     self = std::chrono::duration_cast<std::chrono::milliseconds>(v).count();
   }
