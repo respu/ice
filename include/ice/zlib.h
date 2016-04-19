@@ -30,13 +30,13 @@ public:
 
   void process(const std::uint8_t* data, std::size_t size, bool finish, zlib::handler handler);
 
-  template<typename T, typename Handler>
+  template <typename T, typename Handler>
   std::enable_if_t<!std::is_same<T, std::uint8_t>::value, void> process(const T* data, std::size_t size, bool finish, Handler&& handler)
   {
     process(reinterpret_cast<const std::uint8_t*>(data), sizeof(T) * size, finish, std::forward<Handler>(handler));
   }
 
-  template<typename Handler>
+  template <typename Handler>
   void finish(Handler&& handler)
   {
     process(nullptr, 0, true, std::forward<Handler>(handler));
@@ -65,13 +65,13 @@ public:
 
   void process(const std::uint8_t* data, std::size_t size, bool finish, zlib::handler handler);
 
-  template<typename T, typename Handler>
+  template <typename T, typename Handler>
   std::enable_if_t<!std::is_same<T, std::uint8_t>::value, void> process(const T* data, std::size_t size, bool finish, Handler&& handler)
   {
     process(reinterpret_cast<const std::uint8_t*>(data), sizeof(T) * size, finish, std::forward<Handler>(handler));
   }
 
-  template<typename Handler>
+  template <typename Handler>
   void finish(Handler&& handler)
   {
     process(nullptr, 0, true, std::forward<Handler>(handler));

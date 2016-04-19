@@ -40,7 +40,7 @@ namespace ice {
 
 // declarations
 
-template<class charT, class Traits = ::std::char_traits<charT>>
+template <class charT, class Traits = ::std::char_traits<charT>>
 class basic_string_view;
 
 typedef basic_string_view<char> string_view;
@@ -51,7 +51,7 @@ typedef basic_string_view<char32_t> u32string_view;
 
 // class basic_string_view
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 class basic_string_view {
 public:
   // types
@@ -82,7 +82,7 @@ public:
 
   constexpr basic_string_view(const basic_string_view&) noexcept = default;
 
-  template<class Allocator>
+  template <class Allocator>
   basic_string_view(const ::std::basic_string<charT, Traits, Allocator>& s) noexcept
     : data_(s.data()), len_(s.size())
   {}
@@ -179,13 +179,13 @@ public:
 
   // conversion & copy
 
-  template<class Allocator>
+  template <class Allocator>
   explicit operator ::std::basic_string<charT, Traits, Allocator>() const
   {
     return ::std::basic_string<charT, Traits, Allocator>(begin(), end());
   }
 
-  template<class Allocator = ::std::allocator<charT>>
+  template <class Allocator = ::std::allocator<charT>>
   ::std::basic_string<charT, Traits, Allocator>
     to_string(const Allocator& a = Allocator()) const
   {
@@ -454,7 +454,7 @@ private:
     return it == cend() ? npos : static_cast<size_type>(it - cbegin());
   }
 
-  template<typename Pred>
+  template <typename Pred>
   size_type find_if_(Pred&& pred, size_type pos) const noexcept
   {
     if (pos >= size()) return npos;
@@ -462,7 +462,7 @@ private:
     return get_pos_(r);
   }
 
-  template<typename Pred>
+  template <typename Pred>
   size_type find_if_not_(Pred&& pred, size_type pos) const noexcept
   {
     if (pos >= size()) return npos;
@@ -470,7 +470,7 @@ private:
     return get_pos_(r);
   }
 
-  template<typename Pred>
+  template <typename Pred>
   size_type rfind_if_(Pred&& pred, size_type pos) const noexcept
   {
     pos = pos < size() ? pos + 1 : size();
@@ -482,7 +482,7 @@ private:
     return npos;
   }
 
-  template<typename Pred>
+  template <typename Pred>
   size_type rfind_if_not_(Pred&& pred, size_type pos) const noexcept
   {
     pos = pos < size() ? pos + 1 : size();
@@ -498,7 +498,7 @@ private:
 
    // External swap
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline void swap(basic_string_view<charT, Traits>& a, basic_string_view<charT, Traits>& b) noexcept
 {
   a.swap(b);
@@ -506,38 +506,38 @@ inline void swap(basic_string_view<charT, Traits>& a, basic_string_view<charT, T
 
 // Comparison
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline bool operator==(basic_string_view<charT, Traits> lhs, basic_string_view<charT, Traits> rhs) noexcept
 {
   if (lhs.size() != rhs.size()) return false;
   return lhs.compare(rhs) == 0;
 }
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline bool operator!=(basic_string_view<charT, Traits> lhs, basic_string_view<charT, Traits> rhs) noexcept
 {
   return !(lhs == rhs);
 }
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline bool operator< (basic_string_view<charT, Traits> lhs, basic_string_view<charT, Traits> rhs) noexcept
 {
   return lhs.compare(rhs) < 0;
 }
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline bool operator> (basic_string_view<charT, Traits> lhs, basic_string_view<charT, Traits> rhs) noexcept
 {
   return lhs.compare(rhs) > 0;
 }
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline bool operator<=(basic_string_view<charT, Traits> lhs, basic_string_view<charT, Traits> rhs) noexcept
 {
   return lhs.compare(rhs) <= 0;
 }
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline bool operator>=(basic_string_view<charT, Traits> lhs, basic_string_view<charT, Traits> rhs) noexcept
 {
   return lhs.compare(rhs) >= 0;
@@ -546,7 +546,7 @@ inline bool operator>=(basic_string_view<charT, Traits> lhs, basic_string_view<c
 
 // stream output
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 inline ::std::basic_ostream<charT, Traits>& operator<< (
   ::std::basic_ostream<charT, Traits>& os,
   basic_string_view<charT, Traits> sv)
@@ -583,7 +583,7 @@ inline ::std::basic_ostream<charT, Traits>& operator<< (
 
 namespace std {
 
-template<class charT, class Traits>
+template <class charT, class Traits>
 struct hash<ice::basic_string_view<charT, Traits>>
   : public unary_function<ice::basic_string_view<charT, Traits>, size_t> {
 

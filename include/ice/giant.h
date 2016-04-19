@@ -50,7 +50,7 @@ namespace giant
     enum { xinu_type = 0, unix_type = 1, nuxi_type = 2, type = nuxi_type, is_little = 0, is_big = 0 };
 #endif
 
-    template<typename T>
+    template <typename T>
     T swap( T out )
     {
         static union autodetect {
@@ -106,29 +106,29 @@ namespace giant
         return out;
     }
 
-    template<typename T>
+    template <typename T>
     T letobe( const T &in ) {
         return swap( in );
     }
-    template<typename T>
+    template <typename T>
     T betole( const T &in ) {
         return swap( in );
     }
 
-    template<typename T>
+    template <typename T>
     T letoh( const T &in ) {
         return type == xinu_type ? in : swap( in );
     }
-    template<typename T>
+    template <typename T>
     T htole( const T &in ) {
         return type == xinu_type ? in : swap( in );
     }
 
-    template<typename T>
+    template <typename T>
     T betoh( const T &in ) {
         return type == unix_type ? in : swap( in );
     }
-    template<typename T>
+    template <typename T>
     T htobe( const T &in ) {
         return type == unix_type ? in : swap( in );
     }

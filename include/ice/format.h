@@ -1050,12 +1050,12 @@ namespace internal {
 
   No &operator<<(std::ostream &, int);
 
-  template<typename T, bool ENABLE_CONVERSION>
+  template <typename T, bool ENABLE_CONVERSION>
   struct ConvertToIntImpl {
     enum { value = false };
   };
 
-  template<typename T>
+  template <typename T>
   struct ConvertToIntImpl<T, true> {
     // Convert to int only if T doesn't have an overloaded operator<<.
     enum {
@@ -1063,12 +1063,12 @@ namespace internal {
     };
   };
 
-  template<typename T, bool ENABLE_CONVERSION>
+  template <typename T, bool ENABLE_CONVERSION>
   struct ConvertToIntImpl2 {
     enum { value = false };
   };
 
-  template<typename T>
+  template <typename T>
   struct ConvertToIntImpl2<T, true> {
     enum {
       // Don't convert numeric types.
@@ -1076,7 +1076,7 @@ namespace internal {
     };
   };
 
-  template<typename T>
+  template <typename T>
   struct ConvertToInt {
     enum { enable_conversion = sizeof(convert(get<T>())) == sizeof(Yes) };
     enum { value = ConvertToIntImpl2<T, enable_conversion>::value };
@@ -1091,23 +1091,23 @@ namespace internal {
   FMT_DISABLE_CONVERSION_TO_INT(double);
   FMT_DISABLE_CONVERSION_TO_INT(long double);
 
-  template<bool B, class T = void>
+  template <bool B, class T = void>
   struct EnableIf {};
 
-  template<class T>
+  template <class T>
   struct EnableIf<true, T> { typedef T type; };
 
-  template<bool B, class T, class F>
+  template <bool B, class T, class F>
   struct Conditional { typedef T type; };
 
-  template<class T, class F>
+  template <class T, class F>
   struct Conditional<false, T, F> { typedef F type; };
 
   // For bcc32 which doesn't understand ! in template arguments.
-  template<bool>
+  template <bool>
   struct Not { enum { value = 0 }; };
 
-  template<>
+  template <>
   struct Not<false> { enum { value = 1 }; };
 
   // Makes an Arg object from any type.
@@ -2054,11 +2054,7 @@ namespace internal {
       template <typename Formatter, typename T>
       static Value make(const T &value)
       {
-        Value result = MakeValue<Formatter>(value);
-        // Workaround a bug in Apple LLVM version 4.2 (clang-425.0.28) of clang:
-        // https://github.com/cppformat/cppformat/issues/276
-        (void)result.custom.format;
-        return result;
+        return MakeValue<Formatter>(value);
       }
     };
 
@@ -2401,7 +2397,7 @@ private:
     *format_ptr++ = 'L';
   }
 
-  template<typename T>
+  template <typename T>
   void append_float_length(Char *&, T) {}
 
   template <typename Impl, typename Char_>

@@ -38,6 +38,9 @@ struct uuid {
   // Parses a portable binary blob into the UUID.
   explicit uuid(const data_type& data);
 
+  // Parses a portable binary blob into the UUID.
+  explicit uuid(const std::uint8_t* data, std::size_t size);
+
   // Formats the UUID as a string.
   std::string str() const;
 
@@ -48,7 +51,7 @@ struct uuid {
   static uuid generate();
 
   // Checks if the given string is a UUID.
-  bool check(const std::string& str);
+  static bool check(const std::string& str);
 };
 
 inline constexpr bool operator==(const ice::uuid& a, const ice::uuid& b)

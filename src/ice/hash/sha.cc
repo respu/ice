@@ -6,7 +6,7 @@ namespace hash {
 
 // SHA1 =======================================================================
 
-template<>
+template <>
 struct sha<sha_size::sha1>::context : public SHA_CTX {};
 
 sha<sha_size::sha1>::sha() :
@@ -15,17 +15,17 @@ sha<sha_size::sha1>::sha() :
   reset();
 }
 
-template<>
+template <>
 sha<sha_size::sha1>::~sha()
 {}
 
-template<>
+template <>
 void sha<sha_size::sha1>::append(const std::uint8_t* data, std::size_t size)
 {
   SHA1_Update(context_.get(), data, size);
 }
 
-template<>
+template <>
 sha<sha_size::sha1>::value_type sha<sha_size::sha1>::value() const
 {
   value_type value;
@@ -33,7 +33,7 @@ sha<sha_size::sha1>::value_type sha<sha_size::sha1>::value() const
   return value;
 }
 
-template<>
+template <>
 void sha<sha_size::sha1>::reset()
 {
   SHA1_Init(context_.get());
@@ -41,7 +41,7 @@ void sha<sha_size::sha1>::reset()
 
 // SHA224 =====================================================================
 
-template<>
+template <>
 struct sha<sha_size::sha224>::context : public SHA256_CTX {};
 
 sha<sha_size::sha224>::sha() :
@@ -50,17 +50,17 @@ sha<sha_size::sha224>::sha() :
   reset();
 }
 
-template<>
+template <>
 sha<sha_size::sha224>::~sha()
 {}
 
-template<>
+template <>
 void sha<sha_size::sha224>::append(const std::uint8_t* data, std::size_t size)
 {
   SHA224_Update(context_.get(), data, size);
 }
 
-template<>
+template <>
 sha<sha_size::sha224>::value_type sha<sha_size::sha224>::value() const
 {
   value_type value;
@@ -68,7 +68,7 @@ sha<sha_size::sha224>::value_type sha<sha_size::sha224>::value() const
   return value;
 }
 
-template<>
+template <>
 void sha<sha_size::sha224>::reset()
 {
   SHA224_Init(context_.get());
@@ -76,7 +76,7 @@ void sha<sha_size::sha224>::reset()
 
 // SHA256 =====================================================================
 
-template<>
+template <>
 struct sha<sha_size::sha256>::context : public SHA256_CTX {};
 
 sha<sha_size::sha256>::sha() :
@@ -85,17 +85,17 @@ sha<sha_size::sha256>::sha() :
   reset();
 }
 
-template<>
+template <>
 sha<sha_size::sha256>::~sha()
 {}
 
-template<>
+template <>
 void sha<sha_size::sha256>::append(const std::uint8_t* data, std::size_t size)
 {
   SHA256_Update(context_.get(), data, size);
 }
 
-template<>
+template <>
 sha<sha_size::sha256>::value_type sha<sha_size::sha256>::value() const
 {
   value_type value;
@@ -103,7 +103,7 @@ sha<sha_size::sha256>::value_type sha<sha_size::sha256>::value() const
   return value;
 }
 
-template<>
+template <>
 void sha<sha_size::sha256>::reset()
 {
   SHA256_Init(context_.get());
@@ -111,7 +111,7 @@ void sha<sha_size::sha256>::reset()
 
 // SHA384 =====================================================================
 
-template<>
+template <>
 struct sha<sha_size::sha384>::context : public SHA512_CTX {};
 
 sha<sha_size::sha384>::sha() :
@@ -120,17 +120,17 @@ sha<sha_size::sha384>::sha() :
   reset();
 }
 
-template<>
+template <>
 sha<sha_size::sha384>::~sha()
 {}
 
-template<>
+template <>
 void sha<sha_size::sha384>::append(const std::uint8_t* data, std::size_t size)
 {
   SHA384_Update(context_.get(), data, size);
 }
 
-template<>
+template <>
 sha<sha_size::sha384>::value_type sha<sha_size::sha384>::value() const
 {
   value_type value;
@@ -138,7 +138,7 @@ sha<sha_size::sha384>::value_type sha<sha_size::sha384>::value() const
   return value;
 }
 
-template<>
+template <>
 void sha<sha_size::sha384>::reset()
 {
   SHA384_Init(context_.get());
@@ -146,7 +146,7 @@ void sha<sha_size::sha384>::reset()
 
 // SHA512 =====================================================================
 
-template<>
+template <>
 struct sha<sha_size::sha512>::context : public SHA512_CTX {};
 
 sha<sha_size::sha512>::sha() :
@@ -155,17 +155,17 @@ sha<sha_size::sha512>::sha() :
   reset();
 }
 
-template<>
+template <>
 sha<sha_size::sha512>::~sha()
 {}
 
-template<>
+template <>
 void sha<sha_size::sha512>::append(const std::uint8_t* data, std::size_t size)
 {
   SHA512_Update(context_.get(), data, size);
 }
 
-template<>
+template <>
 sha<sha_size::sha512>::value_type sha<sha_size::sha512>::value() const
 {
   value_type value;
@@ -173,7 +173,7 @@ sha<sha_size::sha512>::value_type sha<sha_size::sha512>::value() const
   return value;
 }
 
-template<>
+template <>
 void sha<sha_size::sha512>::reset()
 {
   SHA512_Init(context_.get());

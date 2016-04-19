@@ -1,3 +1,6 @@
+#ifndef DATE_H
+#define DATE_H
+
 // The MIT License (MIT)
 // 
 // Copyright (c) 2015 Howard Hinnant
@@ -20,7 +23,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
 #include <chrono>
 #include <climits>
 #if !(__cplusplus >= 201402)
@@ -32,8 +34,10 @@
 #include <ratio>
 #include <stdexcept>
 
-namespace ice {
-namespace chrono {
+namespace ice
+{
+namespace date
+{
 
 //---------------+
 // Configuration |
@@ -350,9 +354,9 @@ class weekday_indexed
     unsigned char index_ : 4;
 
 public:
-    CONSTCD11 weekday_indexed(const chrono::weekday& wd, unsigned index) NOEXCEPT;
+    CONSTCD11 weekday_indexed(const date::weekday& wd, unsigned index) NOEXCEPT;
 
-    CONSTCD11 chrono::weekday weekday() const NOEXCEPT;
+    CONSTCD11 date::weekday weekday() const NOEXCEPT;
     CONSTCD11 unsigned index() const NOEXCEPT;
     CONSTCD11 bool ok() const NOEXCEPT;
 };
@@ -366,12 +370,12 @@ std::ostream& operator<<(std::ostream& os, const weekday_indexed& wdi);
 
 class weekday_last
 {
-    chrono::weekday wd_;
+    date::weekday wd_;
 
 public:
-    explicit CONSTCD11 weekday_last(const chrono::weekday& wd) NOEXCEPT;
+    explicit CONSTCD11 weekday_last(const date::weekday& wd) NOEXCEPT;
 
-    CONSTCD11 chrono::weekday weekday() const NOEXCEPT;
+    CONSTCD11 date::weekday weekday() const NOEXCEPT;
     CONSTCD11 bool ok() const NOEXCEPT;
 };
 
@@ -384,14 +388,14 @@ std::ostream& operator<<(std::ostream& os, const weekday_last& wdl);
 
 class year_month
 {
-    chrono::year  y_;
-    chrono::month m_;
+    date::year  y_;
+    date::month m_;
 
 public:
-    CONSTCD11 year_month(const chrono::year& y, const chrono::month& m) NOEXCEPT;
+    CONSTCD11 year_month(const date::year& y, const date::month& m) NOEXCEPT;
 
-    CONSTCD11 chrono::year  year()  const NOEXCEPT;
-    CONSTCD11 chrono::month month() const NOEXCEPT;
+    CONSTCD11 date::year  year()  const NOEXCEPT;
+    CONSTCD11 date::month month() const NOEXCEPT;
 
     year_month& operator+=(const months& dm) NOEXCEPT;
     year_month& operator-=(const months& dm) NOEXCEPT;
@@ -423,14 +427,14 @@ std::ostream& operator<<(std::ostream& os, const year_month& ym);
 
 class month_day
 {
-    chrono::month m_;
-    chrono::day   d_;
+    date::month m_;
+    date::day   d_;
 
 public:
-    CONSTCD11 month_day(const chrono::month& m, const chrono::day& d) NOEXCEPT;
+    CONSTCD11 month_day(const date::month& m, const date::day& d) NOEXCEPT;
 
-    CONSTCD11 chrono::month month() const NOEXCEPT;
-    CONSTCD11 chrono::day   day() const NOEXCEPT;
+    CONSTCD11 date::month month() const NOEXCEPT;
+    CONSTCD11 date::day   day() const NOEXCEPT;
 
     CONSTCD14 bool ok() const NOEXCEPT;
 };
@@ -448,12 +452,12 @@ std::ostream& operator<<(std::ostream& os, const month_day& md);
 
 class month_day_last
 {
-    chrono::month m_;
+    date::month m_;
 
 public:
-    CONSTCD11 explicit month_day_last(const chrono::month& m) NOEXCEPT;
+    CONSTCD11 explicit month_day_last(const date::month& m) NOEXCEPT;
 
-    CONSTCD11 chrono::month month() const NOEXCEPT;
+    CONSTCD11 date::month month() const NOEXCEPT;
     CONSTCD11 bool ok() const NOEXCEPT;
 };
 
@@ -470,14 +474,14 @@ std::ostream& operator<<(std::ostream& os, const month_day_last& mdl);
 
 class month_weekday
 {
-    chrono::month           m_;
-    chrono::weekday_indexed wdi_;
+    date::month           m_;
+    date::weekday_indexed wdi_;
 public:
-    CONSTCD11 month_weekday(const chrono::month& m,
-                              const chrono::weekday_indexed& wdi) NOEXCEPT;
+    CONSTCD11 month_weekday(const date::month& m,
+                              const date::weekday_indexed& wdi) NOEXCEPT;
 
-    CONSTCD11 chrono::month           month()           const NOEXCEPT;
-    CONSTCD11 chrono::weekday_indexed weekday_indexed() const NOEXCEPT;
+    CONSTCD11 date::month           month()           const NOEXCEPT;
+    CONSTCD11 date::weekday_indexed weekday_indexed() const NOEXCEPT;
 
     CONSTCD11 bool ok() const NOEXCEPT;
 };
@@ -491,15 +495,15 @@ std::ostream& operator<<(std::ostream& os, const month_weekday& mwd);
 
 class month_weekday_last
 {
-    chrono::month        m_;
-    chrono::weekday_last wdl_;
+    date::month        m_;
+    date::weekday_last wdl_;
 
 public:
-    CONSTCD11 month_weekday_last(const chrono::month& m,
-                                 const chrono::weekday_last& wd) NOEXCEPT;
+    CONSTCD11 month_weekday_last(const date::month& m,
+                                 const date::weekday_last& wd) NOEXCEPT;
 
-    CONSTCD11 chrono::month        month()        const NOEXCEPT;
-    CONSTCD11 chrono::weekday_last weekday_last() const NOEXCEPT;
+    CONSTCD11 date::month        month()        const NOEXCEPT;
+    CONSTCD11 date::weekday_last weekday_last() const NOEXCEPT;
 
     CONSTCD11 bool ok() const NOEXCEPT;
 };
@@ -515,13 +519,13 @@ std::ostream& operator<<(std::ostream& os, const month_weekday_last& mwdl);
 
 class year_month_day
 {
-    chrono::year  y_;
-    chrono::month m_;
-    chrono::day   d_;
+    date::year  y_;
+    date::month m_;
+    date::day   d_;
 
 public:
-    CONSTCD11 year_month_day(const chrono::year& y, const chrono::month& m,
-                               const chrono::day& d) NOEXCEPT;
+    CONSTCD11 year_month_day(const date::year& y, const date::month& m,
+                               const date::day& d) NOEXCEPT;
     CONSTCD14 year_month_day(const year_month_day_last& ymdl) NOEXCEPT;
     CONSTCD14 year_month_day(const day_point& dp) NOEXCEPT;
 
@@ -530,9 +534,9 @@ public:
     year_month_day& operator+=(const years& y)  NOEXCEPT;
     year_month_day& operator-=(const years& y)  NOEXCEPT;
 
-    CONSTCD11 chrono::year  year()  const NOEXCEPT;
-    CONSTCD11 chrono::month month() const NOEXCEPT;
-    CONSTCD11 chrono::day   day()   const NOEXCEPT;
+    CONSTCD11 date::year  year()  const NOEXCEPT;
+    CONSTCD11 date::month month() const NOEXCEPT;
+    CONSTCD11 date::day   day()   const NOEXCEPT;
 
     CONSTCD14 operator day_point() const NOEXCEPT;
     CONSTCD14 bool ok() const NOEXCEPT;
@@ -561,22 +565,22 @@ std::ostream& operator<<(std::ostream& os, const year_month_day& ymd);
 
 class year_month_day_last
 {
-    chrono::year           y_;
-    chrono::month_day_last mdl_;
+    date::year           y_;
+    date::month_day_last mdl_;
 
 public:
-    CONSTCD11 year_month_day_last(const chrono::year& y,
-                                  const chrono::month_day_last& mdl) NOEXCEPT;
+    CONSTCD11 year_month_day_last(const date::year& y,
+                                  const date::month_day_last& mdl) NOEXCEPT;
 
     year_month_day_last& operator+=(const months& m) NOEXCEPT;
     year_month_day_last& operator-=(const months& m) NOEXCEPT;
     year_month_day_last& operator+=(const years& y)  NOEXCEPT;
     year_month_day_last& operator-=(const years& y)  NOEXCEPT;
 
-    CONSTCD11 chrono::year           year()           const NOEXCEPT;
-    CONSTCD11 chrono::month          month()          const NOEXCEPT;
-    CONSTCD11 chrono::month_day_last month_day_last() const NOEXCEPT;
-    CONSTCD14 chrono::day            day()            const NOEXCEPT;
+    CONSTCD11 date::year           year()           const NOEXCEPT;
+    CONSTCD11 date::month          month()          const NOEXCEPT;
+    CONSTCD11 date::month_day_last month_day_last() const NOEXCEPT;
+    CONSTCD14 date::day            day()            const NOEXCEPT;
 
     CONSTCD14 operator day_point() const NOEXCEPT;
     CONSTCD11 bool ok() const NOEXCEPT;
@@ -625,13 +629,13 @@ std::ostream& operator<<(std::ostream& os, const year_month_day_last& ymdl);
 
 class year_month_weekday
 {
-    chrono::year            y_;
-    chrono::month           m_;
-    chrono::weekday_indexed wdi_;
+    date::year            y_;
+    date::month           m_;
+    date::weekday_indexed wdi_;
 
 public:
-    CONSTCD11 year_month_weekday(const chrono::year& y, const chrono::month& m,
-                                   const chrono::weekday_indexed& wdi) NOEXCEPT;
+    CONSTCD11 year_month_weekday(const date::year& y, const date::month& m,
+                                   const date::weekday_indexed& wdi) NOEXCEPT;
     CONSTCD14 year_month_weekday(const day_point& dp) NOEXCEPT;
 
     year_month_weekday& operator+=(const months& m) NOEXCEPT;
@@ -639,11 +643,11 @@ public:
     year_month_weekday& operator+=(const years& y)  NOEXCEPT;
     year_month_weekday& operator-=(const years& y)  NOEXCEPT;
 
-    CONSTCD11 chrono::year year() const NOEXCEPT;
-    CONSTCD11 chrono::month month() const NOEXCEPT;
-    CONSTCD11 chrono::weekday weekday() const NOEXCEPT;
+    CONSTCD11 date::year year() const NOEXCEPT;
+    CONSTCD11 date::month month() const NOEXCEPT;
+    CONSTCD11 date::weekday weekday() const NOEXCEPT;
     CONSTCD11 unsigned index() const NOEXCEPT;
-    CONSTCD11 chrono::weekday_indexed weekday_indexed() const NOEXCEPT;
+    CONSTCD11 date::weekday_indexed weekday_indexed() const NOEXCEPT;
 
     CONSTCD14 operator day_point() const NOEXCEPT;
     CONSTCD14 bool ok() const NOEXCEPT;
@@ -687,23 +691,23 @@ std::ostream& operator<<(std::ostream& os, const year_month_weekday& ymwdi);
 
 class year_month_weekday_last
 {
-    chrono::year y_;
-    chrono::month m_;
-    chrono::weekday_last wdl_;
+    date::year y_;
+    date::month m_;
+    date::weekday_last wdl_;
 
 public:
-    CONSTCD11 year_month_weekday_last(const chrono::year& y, const chrono::month& m,
-                                      const chrono::weekday_last& wdl) NOEXCEPT;
+    CONSTCD11 year_month_weekday_last(const date::year& y, const date::month& m,
+                                      const date::weekday_last& wdl) NOEXCEPT;
 
     year_month_weekday_last& operator+=(const months& m) NOEXCEPT;
     year_month_weekday_last& operator-=(const months& m) NOEXCEPT;
     year_month_weekday_last& operator+=(const years& y) NOEXCEPT;
     year_month_weekday_last& operator-=(const years& y) NOEXCEPT;
 
-    CONSTCD11 chrono::year year() const NOEXCEPT;
-    CONSTCD11 chrono::month month() const NOEXCEPT;
-    CONSTCD11 chrono::weekday weekday() const NOEXCEPT;
-    CONSTCD11 chrono::weekday_last weekday_last() const NOEXCEPT;
+    CONSTCD11 date::year year() const NOEXCEPT;
+    CONSTCD11 date::month month() const NOEXCEPT;
+    CONSTCD11 date::weekday weekday() const NOEXCEPT;
+    CONSTCD11 date::weekday_last weekday_last() const NOEXCEPT;
 
     CONSTCD14 operator day_point() const NOEXCEPT;
     CONSTCD11 bool ok() const NOEXCEPT;
@@ -747,29 +751,29 @@ std::ostream& operator<<(std::ostream& os, const year_month_weekday_last& ymwdl)
 inline namespace literals
 {
 
-CONSTCD11 chrono::day  operator "" _d(unsigned long long d) NOEXCEPT;
-CONSTCD11 chrono::year operator "" _y(unsigned long long y) NOEXCEPT;
+CONSTCD11 date::day  operator "" _d(unsigned long long d) NOEXCEPT;
+CONSTCD11 date::year operator "" _y(unsigned long long y) NOEXCEPT;
 
-// CONSTDATA chrono::month jan{1};
-// CONSTDATA chrono::month feb{2};
-// CONSTDATA chrono::month mar{3};
-// CONSTDATA chrono::month apr{4};
-// CONSTDATA chrono::month may{5};
-// CONSTDATA chrono::month jun{6};
-// CONSTDATA chrono::month jul{7};
-// CONSTDATA chrono::month aug{8};
-// CONSTDATA chrono::month sep{9};
-// CONSTDATA chrono::month oct{10};
-// CONSTDATA chrono::month nov{11};
-// CONSTDATA chrono::month dec{12};
+// CONSTDATA date::month jan{1};
+// CONSTDATA date::month feb{2};
+// CONSTDATA date::month mar{3};
+// CONSTDATA date::month apr{4};
+// CONSTDATA date::month may{5};
+// CONSTDATA date::month jun{6};
+// CONSTDATA date::month jul{7};
+// CONSTDATA date::month aug{8};
+// CONSTDATA date::month sep{9};
+// CONSTDATA date::month oct{10};
+// CONSTDATA date::month nov{11};
+// CONSTDATA date::month dec{12};
 // 
-// CONSTDATA chrono::weekday sun{0u};
-// CONSTDATA chrono::weekday mon{1u};
-// CONSTDATA chrono::weekday tue{2u};
-// CONSTDATA chrono::weekday wed{3u};
-// CONSTDATA chrono::weekday thu{4u};
-// CONSTDATA chrono::weekday fri{5u};
-// CONSTDATA chrono::weekday sat{6u};
+// CONSTDATA date::weekday sun{0u};
+// CONSTDATA date::weekday mon{1u};
+// CONSTDATA date::weekday tue{2u};
+// CONSTDATA date::weekday wed{3u};
+// CONSTDATA date::weekday thu{4u};
+// CONSTDATA date::weekday fri{5u};
+// CONSTDATA date::weekday sat{6u};
 
 }  // inline namespace literals
 #endif // !defined(_MSC_VER) || (_MSC_VER >= 1900)
@@ -1229,40 +1233,40 @@ operator<<(std::ostream& os, const month& m)
     switch (static_cast<unsigned>(m))
     {
     case 1:
-        os << "Jan";
+        os << "jan";
         break;
     case 2:
-        os << "Feb";
+        os << "feb";
         break;
     case 3:
-        os << "Mar";
+        os << "mar";
         break;
     case 4:
-        os << "Apr";
+        os << "apr";
         break;
     case 5:
-        os << "May";
+        os << "may";
         break;
     case 6:
-        os << "Jun";
+        os << "jun";
         break;
     case 7:
-        os << "Jul";
+        os << "jul";
         break;
     case 8:
-        os << "Aug";
+        os << "aug";
         break;
     case 9:
-        os << "Sep";
+        os << "sep";
         break;
     case 10:
-        os << "Oct";
+        os << "oct";
         break;
     case 11:
-        os << "Nov";
+        os << "nov";
         break;
     case 12:
-        os << "Dec";
+        os << "dec";
         break;
     default:
         os << static_cast<unsigned>(m) << " is not a valid month";
@@ -1521,25 +1525,25 @@ operator<<(std::ostream& os, const weekday& wd)
     switch (static_cast<unsigned>(wd))
     {
     case 0:
-        os << "Sun";
+        os << "sun";
         break;
     case 1:
-        os << "Mon";
+        os << "mon";
         break;
     case 2:
-        os << "Tue";
+        os << "tue";
         break;
     case 3:
-        os << "Wed";
+        os << "wed";
         break;
     case 4:
-        os << "Thu";
+        os << "thu";
         break;
     case 5:
-        os << "Fri";
+        os << "fri";
         break;
     case 6:
-        os << "Sat";
+        os << "sat";
         break;
     default:
         os << static_cast<unsigned>(wd) << " is not a valid weekday";
@@ -1554,43 +1558,43 @@ inline namespace literals
 
 CONSTCD11
 inline
-chrono::day
+date::day
 operator "" _d(unsigned long long d) NOEXCEPT
 {
-    return chrono::day{static_cast<unsigned>(d)};
+    return date::day{static_cast<unsigned>(d)};
 }
 
 CONSTCD11
 inline
-chrono::year
+date::year
 operator "" _y(unsigned long long y) NOEXCEPT
 {
-    return chrono::year(static_cast<int>(y));
+    return date::year(static_cast<int>(y));
 }
 #endif  // !defined(_MSC_VER) || (_MSC_VER >= 1900)
 
-CONSTDATA chrono::last_spec last{};
+CONSTDATA date::last_spec last{};
 
-CONSTDATA chrono::month jan{1};
-CONSTDATA chrono::month feb{2};
-CONSTDATA chrono::month mar{3};
-CONSTDATA chrono::month apr{4};
-CONSTDATA chrono::month may{5};
-CONSTDATA chrono::month jun{6};
-CONSTDATA chrono::month jul{7};
-CONSTDATA chrono::month aug{8};
-CONSTDATA chrono::month sep{9};
-CONSTDATA chrono::month oct{10};
-CONSTDATA chrono::month nov{11};
-CONSTDATA chrono::month dec{12};
+CONSTDATA date::month jan{1};
+CONSTDATA date::month feb{2};
+CONSTDATA date::month mar{3};
+CONSTDATA date::month apr{4};
+CONSTDATA date::month may{5};
+CONSTDATA date::month jun{6};
+CONSTDATA date::month jul{7};
+CONSTDATA date::month aug{8};
+CONSTDATA date::month sep{9};
+CONSTDATA date::month oct{10};
+CONSTDATA date::month nov{11};
+CONSTDATA date::month dec{12};
 
-CONSTDATA chrono::weekday sun{0u};
-CONSTDATA chrono::weekday mon{1u};
-CONSTDATA chrono::weekday tue{2u};
-CONSTDATA chrono::weekday wed{3u};
-CONSTDATA chrono::weekday thu{4u};
-CONSTDATA chrono::weekday fri{5u};
-CONSTDATA chrono::weekday sat{6u};
+CONSTDATA date::weekday sun{0u};
+CONSTDATA date::weekday mon{1u};
+CONSTDATA date::weekday tue{2u};
+CONSTDATA date::weekday wed{3u};
+CONSTDATA date::weekday thu{4u};
+CONSTDATA date::weekday fri{5u};
+CONSTDATA date::weekday sat{6u};
 
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)
 }  // inline namespace literals
@@ -1603,7 +1607,7 @@ inline
 weekday
 weekday_indexed::weekday() const NOEXCEPT
 {
-    return chrono::weekday{static_cast<unsigned>(wd_)};
+    return date::weekday{static_cast<unsigned>(wd_)};
 }
 
 CONSTCD11 inline unsigned weekday_indexed::index() const NOEXCEPT {return index_;}
@@ -1618,7 +1622,7 @@ weekday_indexed::ok() const NOEXCEPT
 
 CONSTCD11
 inline
-weekday_indexed::weekday_indexed(const chrono::weekday& wd, unsigned index) NOEXCEPT
+weekday_indexed::weekday_indexed(const date::weekday& wd, unsigned index) NOEXCEPT
     : wd_(static_cast<decltype(wd_)>(static_cast<unsigned>(wd)))
     , index_(static_cast<decltype(index_)>(index))
     {}
@@ -1656,9 +1660,9 @@ operator!=(const weekday_indexed& x, const weekday_indexed& y) NOEXCEPT
 
 // weekday_last
 
-CONSTCD11 inline chrono::weekday weekday_last::weekday() const NOEXCEPT {return wd_;}
+CONSTCD11 inline date::weekday weekday_last::weekday() const NOEXCEPT {return wd_;}
 CONSTCD11 inline bool weekday_last::ok() const NOEXCEPT {return wd_.ok();}
-CONSTCD11 inline weekday_last::weekday_last(const chrono::weekday& wd) NOEXCEPT : wd_(wd) {}
+CONSTCD11 inline weekday_last::weekday_last(const date::weekday& wd) NOEXCEPT : wd_(wd) {}
 
 CONSTCD11
 inline
@@ -1695,7 +1699,7 @@ weekday::operator[](last_spec) const NOEXCEPT
 
 CONSTCD11
 inline
-year_month::year_month(const chrono::year& y, const chrono::month& m) NOEXCEPT
+year_month::year_month(const date::year& y, const date::month& m) NOEXCEPT
     : y_(y)
     , m_(m)
     {}
@@ -1850,34 +1854,40 @@ inline
 std::ostream&
 operator<<(std::ostream& os, const year_month& ym)
 {
-    return os << ym.year() << '/' << ym.month();
+    detail::save_stream _(os);
+    os.fill('0');
+    os.flags(std::ios::dec | std::ios::right);
+    os << ym.year() << '-';
+    os.width(2);
+    os << static_cast<unsigned>(ym.month());
+    return os;
 }
 
 // month_day
 
 CONSTCD11
 inline
-month_day::month_day(const chrono::month& m, const chrono::day& d) NOEXCEPT
+month_day::month_day(const date::month& m, const date::day& d) NOEXCEPT
     : m_(m)
     , d_(d)
     {}
 
-CONSTCD11 inline chrono::month month_day::month() const NOEXCEPT {return m_;}
-CONSTCD11 inline chrono::day month_day::day() const NOEXCEPT {return d_;}
+CONSTCD11 inline date::month month_day::month() const NOEXCEPT {return m_;}
+CONSTCD11 inline date::day month_day::day() const NOEXCEPT {return d_;}
 
 CONSTCD14
 inline
 bool
 month_day::ok() const NOEXCEPT
 {
-    CONSTDATA chrono::day d[] =
+    CONSTDATA date::day d[] =
     {
-        chrono::day(31), chrono::day(29), chrono::day(31),
-        chrono::day(30), chrono::day(31), chrono::day(30),
-        chrono::day(31), chrono::day(31), chrono::day(30),
-        chrono::day(31), chrono::day(30), chrono::day(31)
+        date::day(31), date::day(29), date::day(31),
+        date::day(30), date::day(31), date::day(30),
+        date::day(31), date::day(31), date::day(30),
+        date::day(31), date::day(30), date::day(31)
     };
-    return m_.ok() && chrono::day{1} <= d_ && d_ <= d[static_cast<unsigned>(m_)-1];
+    return m_.ok() && date::day{1} <= d_ && d_ <= d[static_cast<unsigned>(m_)-1];
 }
 
 CONSTCD11
@@ -1941,7 +1951,7 @@ operator<<(std::ostream& os, const month_day& md)
 
 CONSTCD11 inline month month_day_last::month() const NOEXCEPT {return m_;}
 CONSTCD11 inline bool month_day_last::ok() const NOEXCEPT {return m_.ok();}
-CONSTCD11 inline month_day_last::month_day_last(const chrono::month& m) NOEXCEPT : m_(m) {}
+CONSTCD11 inline month_day_last::month_day_last(const date::month& m) NOEXCEPT : m_(m) {}
 
 CONSTCD11
 inline
@@ -2002,8 +2012,8 @@ operator<<(std::ostream& os, const month_day_last& mdl)
 
 CONSTCD11
 inline
-month_weekday::month_weekday(const chrono::month& m,
-                             const chrono::weekday_indexed& wdi) NOEXCEPT
+month_weekday::month_weekday(const date::month& m,
+                             const date::weekday_indexed& wdi) NOEXCEPT
     : m_(m)
     , wdi_(wdi)
     {}
@@ -2053,8 +2063,8 @@ operator<<(std::ostream& os, const month_weekday& mwd)
 
 CONSTCD11
 inline
-month_weekday_last::month_weekday_last(const chrono::month& m,
-                                       const chrono::weekday_last& wdl) NOEXCEPT
+month_weekday_last::month_weekday_last(const date::month& m,
+                                       const date::weekday_last& wdl) NOEXCEPT
     : m_(m)
     , wdl_(wdl)
     {}
@@ -2104,8 +2114,8 @@ operator<<(std::ostream& os, const month_weekday_last& mwdl)
 
 CONSTCD11
 inline
-year_month_day_last::year_month_day_last(const chrono::year& y,
-                                         const chrono::month_day_last& mdl) NOEXCEPT
+year_month_day_last::year_month_day_last(const date::year& y,
+                                         const date::month_day_last& mdl) NOEXCEPT
     : y_(y)
     , mdl_(mdl)
     {}
@@ -2158,15 +2168,15 @@ inline
 day
 year_month_day_last::day() const NOEXCEPT
 {
-    CONSTDATA chrono::day d[] =
+    CONSTDATA date::day d[] =
     {
-        chrono::day(31), chrono::day(28), chrono::day(31),
-        chrono::day(30), chrono::day(31), chrono::day(30),
-        chrono::day(31), chrono::day(31), chrono::day(30),
-        chrono::day(31), chrono::day(30), chrono::day(31)
+        date::day(31), date::day(28), date::day(31),
+        date::day(30), date::day(31), date::day(30),
+        date::day(31), date::day(31), date::day(30),
+        date::day(31), date::day(30), date::day(31)
     };
     return month() != feb || !y_.is_leap() ?
-        d[static_cast<unsigned>(month()) - 1] : chrono::day{29};
+        d[static_cast<unsigned>(month()) - 1] : date::day{29};
 }
 
 CONSTCD11
@@ -2231,7 +2241,7 @@ inline
 std::ostream&
 operator<<(std::ostream& os, const year_month_day_last& ymdl)
 {
-    return os << ymdl.year() << '/' << ymdl.month_day_last();
+    return os << date::year_month(ymdl.year(), ymdl.month()) << "[last]";
 }
 
 CONSTCD14
@@ -2286,8 +2296,8 @@ operator-(const year_month_day_last& ymdl, const years& dy) NOEXCEPT
 
 CONSTCD11
 inline
-year_month_day::year_month_day(const chrono::year& y, const chrono::month& m,
-                               const chrono::day& d) NOEXCEPT
+year_month_day::year_month_day(const date::year& y, const date::month& m,
+                               const date::day& d) NOEXCEPT
     : y_(y)
     , m_(m)
     , d_(d)
@@ -2375,7 +2385,7 @@ year_month_day::ok() const NOEXCEPT
 {
     if (!(y_.ok() && m_.ok()))
         return false;
-    return chrono::day{1} <= d_ && d_ <= (y_ / m_ / last).day();
+    return date::day{1} <= d_ && d_ <= (y_ / m_ / last).day();
 }
 
 CONSTCD11
@@ -2462,7 +2472,7 @@ year_month_day::from_day_point(const day_point& dp) NOEXCEPT
     auto const mp = (5*doy + 2)/153;                                   // [0, 11]
     auto const d = doy - (153*mp+2)/5 + 1;                             // [1, 31]
     auto const m = mp < 10 ? mp+3 : mp-9;                              // [1, 12]
-    return year_month_day{chrono::year{y + (m <= 2)}, chrono::month(m), chrono::day(d)};
+    return year_month_day{date::year{y + (m <= 2)}, date::month(m), date::day(d)};
 }
 
 CONSTCD14
@@ -2517,8 +2527,8 @@ operator-(const year_month_day& ymd, const years& dy) NOEXCEPT
 
 CONSTCD11
 inline
-year_month_weekday::year_month_weekday(const chrono::year& y, const chrono::month& m,
-                                       const chrono::weekday_indexed& wdi)
+year_month_weekday::year_month_weekday(const date::year& y, const date::month& m,
+                                       const date::weekday_indexed& wdi)
         NOEXCEPT
     : y_(y)
     , m_(m)
@@ -2595,7 +2605,7 @@ inline
 year_month_weekday::operator day_point() const NOEXCEPT
 {
     auto d = day_point(y_/m_/1);
-    return d + (wdi_.weekday() - chrono::weekday(d) + days{(wdi_.index()-1)*7});
+    return d + (wdi_.weekday() - date::weekday(d) + days{(wdi_.index()-1)*7});
 }
 
 CONSTCD14
@@ -2607,7 +2617,7 @@ year_month_weekday::ok() const NOEXCEPT
         return false;
     if (wdi_.index() <= 4)
         return true;
-    auto d2 = wdi_.weekday() - chrono::weekday(y_/m_/1) + days((wdi_.index()-1)*7 + 1);
+    auto d2 = wdi_.weekday() - date::weekday(y_/m_/1) + days((wdi_.index()-1)*7 + 1);
     return static_cast<unsigned>(d2.count()) <= static_cast<unsigned>((y_/m_/last).day());
 }
 
@@ -2616,7 +2626,7 @@ inline
 year_month_weekday
 year_month_weekday::from_day_point(const day_point& dp) NOEXCEPT
 {
-    auto const wd = chrono::weekday(dp);
+    auto const wd = date::weekday(dp);
     auto const ymd = year_month_day(dp);
     return {ymd.year(), ymd.month(), wd[(static_cast<unsigned>(ymd.day())-1)/7+1]};
 }
@@ -2642,8 +2652,7 @@ inline
 std::ostream&
 operator<<(std::ostream& os, const year_month_weekday& ymwdi)
 {
-    return os << ymwdi.year() << '/' << ymwdi.month()
-              << '/' << ymwdi.weekday_indexed();
+    return os << date::year_month(ymwdi.year(), ymwdi.month()) << '/' << ymwdi.weekday_indexed();
 }
 
 CONSTCD14
@@ -2698,9 +2707,9 @@ operator-(const year_month_weekday& ymwd, const years& dy) NOEXCEPT
 
 CONSTCD11
 inline
-year_month_weekday_last::year_month_weekday_last(const chrono::year& y,
-                                                 const chrono::month& m,
-                                                 const chrono::weekday_last& wdl) NOEXCEPT
+year_month_weekday_last::year_month_weekday_last(const date::year& y,
+                                                 const date::month& m,
+                                                 const date::weekday_last& wdl) NOEXCEPT
     : y_(y)
     , m_(m)
     , wdl_(wdl)
@@ -2762,7 +2771,7 @@ inline
 year_month_weekday_last::operator day_point() const NOEXCEPT
 {
     auto const d = day_point(y_/m_/last);
-    return d - (chrono::weekday{d} - wdl_.weekday());
+    return d - (date::weekday{d} - wdl_.weekday());
 }
 
 CONSTCD11
@@ -2794,7 +2803,7 @@ inline
 std::ostream&
 operator<<(std::ostream& os, const year_month_weekday_last& ymwdl)
 {
-    return os << ymwdl.year() << '/' << ymwdl.month() << '/' << ymwdl.weekday_last();
+    return os << date::year_month(ymwdl.year(), ymwdl.month()) << '/' << ymwdl.weekday_last();
 }
 
 CONSTCD14
@@ -3384,7 +3393,7 @@ public:
         {}
 
     CONSTCD11 explicit time_of_day_storage(std::chrono::hours h, std::chrono::minutes m,
-                                           unsigned md) NOEXCEPT
+                                           unsigned md = is24hr) NOEXCEPT
         : base(h, md)
         , m_(m)
         {}
@@ -3453,7 +3462,7 @@ public:
         {}
 
     CONSTCD11 explicit time_of_day_storage(std::chrono::hours h, std::chrono::minutes m,
-                                           std::chrono::seconds s, unsigned md) NOEXCEPT
+                                           std::chrono::seconds s, unsigned md = is24hr) NOEXCEPT
         : base(h, md)
         , m_(m)
         , s_(s)
@@ -3531,7 +3540,7 @@ public:
 
     CONSTCD11 explicit time_of_day_storage(std::chrono::hours h, std::chrono::minutes m,
                                            std::chrono::seconds s, precision sub_s,
-                                           unsigned md) NOEXCEPT
+                                           unsigned md = is24hr) NOEXCEPT
         : base(h, md)
         , m_(m)
         , s_(s)
@@ -3583,7 +3592,8 @@ public:
         os << std::abs(t.sub_s_.count()) * scale::num / scale::den;
 #else  // __cplusplus >= 201402
         // inefficient sub-optimal run-time mess, but gets the job done
-        const unsigned long long cl10 = std::ceil(log10(Period::den));
+        //const unsigned long long cl10 = std::ceil(log10(Period::den));
+        const auto cl10 = static_cast<unsigned long long>(std::ceil(log10(Period::den)));
         const auto p10 = std::pow(10., cl10);
         os.width(cl10);
         os << static_cast<unsigned long long>(std::abs(t.sub_s_.count())
@@ -3734,1737 +3744,7 @@ operator<<(std::ostream& os, const day_point& dp)
     return os << year_month_day(dp);
 }
 
-namespace week {
-
-// y/wn/wd
-// wn/wd/y
-// wd/wn/y
-
-using days = chrono::days;
-using weeks = chrono::weeks;
-using years = chrono::years;
-
-// time_point
-
-using day_point = chrono::day_point;
-
-// types
-
-struct last_week {
-  explicit last_week() = default;
-};
-
-class weekday;
-class weeknum;
-class year;
-
-class year_weeknum;
-class year_lastweek;
-class weeknum_weekday;
-class lastweek_weekday;
-
-class year_weeknum_weekday;
-class year_lastweek_weekday;
-
-// date composition operators
-
-CONSTCD11 year_weeknum operator/(const year& y, const weeknum& wn) NOEXCEPT;
-CONSTCD11 year_weeknum operator/(const year& y, int            wn) NOEXCEPT;
-
-CONSTCD11 year_lastweek operator/(const year& y, last_week      wn) NOEXCEPT;
-
-CONSTCD11 weeknum_weekday operator/(const weeknum& wn, const weekday& wd) NOEXCEPT;
-CONSTCD11 weeknum_weekday operator/(const weeknum& wn, int            wd) NOEXCEPT;
-CONSTCD11 weeknum_weekday operator/(const weekday& wd, const weeknum& wn) NOEXCEPT;
-CONSTCD11 weeknum_weekday operator/(const weekday& wd, int            wn) NOEXCEPT;
-
-CONSTCD11 lastweek_weekday operator/(const last_week& wn, const weekday& wd) NOEXCEPT;
-CONSTCD11 lastweek_weekday operator/(const last_week& wn, int            wd) NOEXCEPT;
-CONSTCD11 lastweek_weekday operator/(const weekday& wd, const last_week& wn) NOEXCEPT;
-
-CONSTCD11 year_weeknum_weekday operator/(const year_weeknum& ywn, const weekday& wd) NOEXCEPT;
-CONSTCD11 year_weeknum_weekday operator/(const year_weeknum& ywn, int            wd) NOEXCEPT;
-CONSTCD11 year_weeknum_weekday operator/(const weeknum_weekday& wnwd, const year& y) NOEXCEPT;
-CONSTCD11 year_weeknum_weekday operator/(const weeknum_weekday& wnwd, int         y) NOEXCEPT;
-
-CONSTCD11 year_lastweek_weekday operator/(const year_lastweek& ylw, const weekday& wd) NOEXCEPT;
-CONSTCD11 year_lastweek_weekday operator/(const year_lastweek& ylw, int            wd) NOEXCEPT;
-
-CONSTCD11 year_lastweek_weekday operator/(const lastweek_weekday& lwwd, const year& y) NOEXCEPT;
-CONSTCD11 year_lastweek_weekday operator/(const lastweek_weekday& lwwd, int         y) NOEXCEPT;
-
-// weekday
-
-class weekday {
-  unsigned char wd_;
-public:
-  explicit CONSTCD11 weekday(unsigned wd) NOEXCEPT;
-  CONSTCD11 weekday(chrono::weekday wd) NOEXCEPT;
-  explicit weekday(int) = delete;
-  CONSTCD11 weekday(const day_point& dp) NOEXCEPT;
-
-  weekday& operator++()    NOEXCEPT;
-  weekday  operator++(int) NOEXCEPT;
-  weekday& operator--()    NOEXCEPT;
-  weekday  operator--(int) NOEXCEPT;
-
-  weekday& operator+=(const days& d) NOEXCEPT;
-  weekday& operator-=(const days& d) NOEXCEPT;
-
-  CONSTCD11 explicit operator unsigned() const NOEXCEPT;
-  CONSTCD11 operator chrono::weekday() const NOEXCEPT;
-  CONSTCD11 bool ok() const NOEXCEPT;
-
-private:
-  static CONSTCD11 unsigned char weekday_from_days(int z) NOEXCEPT;
-  static CONSTCD11 unsigned char to_iso_encoding(unsigned char) NOEXCEPT;
-  static CONSTCD11 unsigned from_iso_encoding(unsigned) NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const weekday& x, const weekday& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const weekday& x, const weekday& y) NOEXCEPT;
-
-CONSTCD14 weekday operator+(const weekday& x, const days&    y) NOEXCEPT;
-CONSTCD14 weekday operator+(const days&    x, const weekday& y) NOEXCEPT;
-CONSTCD14 weekday operator-(const weekday& x, const days&    y) NOEXCEPT;
-CONSTCD14 days    operator-(const weekday& x, const weekday& y) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const weekday& wd);
-
-// year
-
-class year {
-  short y_;
-
-public:
-  explicit CONSTCD11 year(int y) NOEXCEPT;
-
-  year& operator++()    NOEXCEPT;
-  year  operator++(int) NOEXCEPT;
-  year& operator--()    NOEXCEPT;
-  year  operator--(int) NOEXCEPT;
-
-  year& operator+=(const years& y) NOEXCEPT;
-  year& operator-=(const years& y) NOEXCEPT;
-
-  CONSTCD11 explicit operator int() const NOEXCEPT;
-  CONSTCD11 bool ok() const NOEXCEPT;
-
-  static CONSTCD11 year min() NOEXCEPT;
-  static CONSTCD11 year max() NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const year& x, const year& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const year& x, const year& y) NOEXCEPT;
-CONSTCD11 bool operator< (const year& x, const year& y) NOEXCEPT;
-CONSTCD11 bool operator> (const year& x, const year& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const year& x, const year& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const year& x, const year& y) NOEXCEPT;
-
-CONSTCD11 year  operator+(const year&  x, const years& y) NOEXCEPT;
-CONSTCD11 year  operator+(const years& x, const year&  y) NOEXCEPT;
-CONSTCD11 year  operator-(const year&  x, const years& y) NOEXCEPT;
-CONSTCD11 years operator-(const year&  x, const year&  y) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const year& y);
-
-// weeknum
-
-class weeknum {
-  unsigned char wn_;
-
-public:
-  explicit CONSTCD11 weeknum(unsigned wn) NOEXCEPT;
-
-  weeknum& operator++()    NOEXCEPT;
-  weeknum  operator++(int) NOEXCEPT;
-  weeknum& operator--()    NOEXCEPT;
-  weeknum  operator--(int) NOEXCEPT;
-
-  weeknum& operator+=(const weeks& y) NOEXCEPT;
-  weeknum& operator-=(const weeks& y) NOEXCEPT;
-
-  CONSTCD11 explicit operator unsigned() const NOEXCEPT;
-  CONSTCD11 bool ok() const NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const weeknum& x, const weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const weeknum& x, const weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator< (const weeknum& x, const weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator> (const weeknum& x, const weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const weeknum& x, const weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const weeknum& x, const weeknum& y) NOEXCEPT;
-
-CONSTCD11 weeknum  operator+(const weeknum& x, const weeks&   y) NOEXCEPT;
-CONSTCD11 weeknum  operator+(const weeks&   x, const weeknum& y) NOEXCEPT;
-CONSTCD11 weeknum  operator-(const weeknum& x, const weeks&   y) NOEXCEPT;
-CONSTCD11 weeks    operator-(const weeknum& x, const weeknum& y) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const weeknum& wn);
-
-// year_weeknum
-
-class year_weeknum {
-  week::year    y_;
-  week::weeknum wn_;
-
-public:
-  CONSTCD11 year_weeknum(const week::year& y, const week::weeknum& wn) NOEXCEPT;
-
-  CONSTCD11 week::year    year()    const NOEXCEPT;
-  CONSTCD11 week::weeknum weeknum() const NOEXCEPT;
-
-  year_weeknum& operator+=(const years& dy) NOEXCEPT;
-  year_weeknum& operator-=(const years& dy) NOEXCEPT;
-
-  CONSTCD11 bool ok() const NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const year_weeknum& x, const year_weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const year_weeknum& x, const year_weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator< (const year_weeknum& x, const year_weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator> (const year_weeknum& x, const year_weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const year_weeknum& x, const year_weeknum& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const year_weeknum& x, const year_weeknum& y) NOEXCEPT;
-
-CONSTCD11 year_weeknum operator+(const year_weeknum& ym, const years& dy) NOEXCEPT;
-CONSTCD11 year_weeknum operator+(const years& dy, const year_weeknum& ym) NOEXCEPT;
-CONSTCD11 year_weeknum operator-(const year_weeknum& ym, const years& dy) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const year_weeknum& ym);
-
-// year_lastweek
-
-class year_lastweek {
-  week::year    y_;
-
-public:
-  CONSTCD11 explicit year_lastweek(const week::year& y) NOEXCEPT;
-
-  CONSTCD11 week::year    year()    const NOEXCEPT;
-  CONSTCD14 week::weeknum weeknum() const NOEXCEPT;
-
-  year_lastweek& operator+=(const years& dy) NOEXCEPT;
-  year_lastweek& operator-=(const years& dy) NOEXCEPT;
-
-  CONSTCD11 bool ok() const NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const year_lastweek& x, const year_lastweek& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const year_lastweek& x, const year_lastweek& y) NOEXCEPT;
-CONSTCD11 bool operator< (const year_lastweek& x, const year_lastweek& y) NOEXCEPT;
-CONSTCD11 bool operator> (const year_lastweek& x, const year_lastweek& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const year_lastweek& x, const year_lastweek& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const year_lastweek& x, const year_lastweek& y) NOEXCEPT;
-
-CONSTCD11 year_lastweek operator+(const year_lastweek& ym, const years& dy) NOEXCEPT;
-CONSTCD11 year_lastweek operator+(const years& dy, const year_lastweek& ym) NOEXCEPT;
-CONSTCD11 year_lastweek operator-(const year_lastweek& ym, const years& dy) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const year_lastweek& ym);
-
-// weeknum_weekday
-
-class weeknum_weekday {
-  week::weeknum wn_;
-  week::weekday wd_;
-
-public:
-  CONSTCD11 weeknum_weekday(const week::weeknum& wn,
-    const week::weekday& wd) NOEXCEPT;
-
-  CONSTCD11 week::weeknum weeknum() const NOEXCEPT;
-  CONSTCD11 week::weekday weekday() const NOEXCEPT;
-
-  CONSTCD14 bool ok() const NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator< (const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator> (const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const weeknum_weekday& md);
-
-// lastweek_weekday
-
-class lastweek_weekday {
-  week::weekday wd_;
-
-public:
-  CONSTCD11 explicit lastweek_weekday(const week::weekday& wd) NOEXCEPT;
-
-  CONSTCD11 week::weekday weekday() const NOEXCEPT;
-
-  CONSTCD14 bool ok() const NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator< (const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator> (const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const lastweek_weekday& md);
-
-// year_lastweek_weekday
-
-class year_lastweek_weekday {
-  week::year    y_;
-  week::weekday wd_;
-
-public:
-  CONSTCD11 year_lastweek_weekday(const week::year& y,
-    const week::weekday& wd) NOEXCEPT;
-
-  year_lastweek_weekday& operator+=(const years& y) NOEXCEPT;
-  year_lastweek_weekday& operator-=(const years& y) NOEXCEPT;
-
-  CONSTCD11 week::year    year()    const NOEXCEPT;
-  CONSTCD11 week::weeknum weeknum() const NOEXCEPT;
-  CONSTCD11 week::weekday weekday() const NOEXCEPT;
-
-  CONSTCD14 operator day_point() const NOEXCEPT;
-  CONSTCD11 bool ok() const NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator< (const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator> (const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT;
-
-CONSTCD11 year_lastweek_weekday operator+(const year_lastweek_weekday& ywnwd, const years& y) NOEXCEPT;
-CONSTCD11 year_lastweek_weekday operator+(const years& y, const year_lastweek_weekday& ywnwd) NOEXCEPT;
-CONSTCD11 year_lastweek_weekday operator-(const year_lastweek_weekday& ywnwd, const years& y) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const year_lastweek_weekday& ywnwd);
-
-// class year_weeknum_weekday
-
-class year_weeknum_weekday {
-  week::year    y_;
-  week::weeknum wn_;
-  week::weekday wd_;
-
-public:
-  CONSTCD11 year_weeknum_weekday(const week::year& y, const week::weeknum& wn,
-    const week::weekday& wd) NOEXCEPT;
-  CONSTCD14 year_weeknum_weekday(const year_lastweek_weekday& ylwwd) NOEXCEPT;
-  CONSTCD14 year_weeknum_weekday(const day_point& dp) NOEXCEPT;
-
-  year_weeknum_weekday& operator+=(const years& y) NOEXCEPT;
-  year_weeknum_weekday& operator-=(const years& y) NOEXCEPT;
-
-  CONSTCD11 week::year    year()    const NOEXCEPT;
-  CONSTCD11 week::weeknum weeknum() const NOEXCEPT;
-  CONSTCD11 week::weekday weekday() const NOEXCEPT;
-
-  CONSTCD14 operator day_point() const NOEXCEPT;
-  CONSTCD14 bool ok() const NOEXCEPT;
-
-private:
-  static CONSTCD14 year_weeknum_weekday from_day_point(const day_point& dp) NOEXCEPT;
-};
-
-CONSTCD11 bool operator==(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator!=(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator< (const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator> (const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator<=(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT;
-CONSTCD11 bool operator>=(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT;
-
-CONSTCD11 year_weeknum_weekday operator+(const year_weeknum_weekday& ywnwd, const years& y) NOEXCEPT;
-CONSTCD11 year_weeknum_weekday operator+(const years& y, const year_weeknum_weekday& ywnwd) NOEXCEPT;
-CONSTCD11 year_weeknum_weekday operator-(const year_weeknum_weekday& ywnwd, const years& y) NOEXCEPT;
-
-std::ostream& operator<<(std::ostream& os, const year_weeknum_weekday& ywnwd);
-
-//----------------+
-// Implementation |
-//----------------+
-
-// weekday
-
-CONSTCD11
-inline
-unsigned char
-weekday::to_iso_encoding(unsigned char z) NOEXCEPT
-{
-  return z != 0 ? z : (unsigned char)7;
-}
-
-CONSTCD11
-inline
-unsigned
-weekday::from_iso_encoding(unsigned z) NOEXCEPT
-{
-  return z != 7 ? z : 0u;
-}
-
-CONSTCD11
-inline
-unsigned char
-weekday::weekday_from_days(int z) NOEXCEPT
-{
-  return to_iso_encoding(static_cast<unsigned char>(static_cast<unsigned>(
-    z >= -4 ? (z + 4) % 7 : (z + 5) % 7 + 6)));
-}
-
-CONSTCD11
-inline
-weekday::weekday(unsigned wd) NOEXCEPT
-  : wd_(static_cast<decltype(wd_)>(wd))
-{}
-
-CONSTCD11
-inline
-weekday::weekday(chrono::weekday wd) NOEXCEPT
-  : wd_(to_iso_encoding(unsigned{ wd }))
-{}
-
-CONSTCD11
-inline
-weekday::weekday(const day_point& dp) NOEXCEPT
-  : wd_(weekday_from_days(dp.time_since_epoch().count()))
-{}
-
-inline weekday& weekday::operator++() NOEXCEPT
-{
-  if (++wd_ == 8) wd_ = 1; return *this;
-}
-inline weekday weekday::operator++(int) NOEXCEPT
-{
-  auto tmp(*this); ++(*this); return tmp;
-}
-inline weekday& weekday::operator--() NOEXCEPT
-{
-  if (wd_-- == 1) wd_ = 7; return *this;
-}
-inline weekday weekday::operator--(int) NOEXCEPT
-{
-  auto tmp(*this); --(*this); return tmp;
-}
-
-inline
-weekday&
-weekday::operator+=(const days& d) NOEXCEPT
-{
-  *this = *this + d;
-  return *this;
-}
-
-inline
-weekday&
-weekday::operator-=(const days& d) NOEXCEPT
-{
-  *this = *this - d;
-  return *this;
-}
-
-CONSTCD11
-inline
-weekday::operator unsigned() const NOEXCEPT
-{
-  return wd_;
-}
-
-CONSTCD11
-inline
-weekday::operator chrono::weekday() const NOEXCEPT
-{
-  return chrono::weekday{ from_iso_encoding(unsigned{ wd_ }) };
-}
-
-CONSTCD11 inline bool weekday::ok() const NOEXCEPT
-{
-  return 1 <= wd_ && wd_ <= 7;
-}
-
-CONSTCD11
-inline
-bool
-operator==(const weekday& x, const weekday& y) NOEXCEPT
-{
-  return static_cast<unsigned>(x) == static_cast<unsigned>(y);
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const weekday& x, const weekday& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD14
-inline
-days
-operator-(const weekday& x, const weekday& y) NOEXCEPT
-{
-  auto const diff = static_cast<unsigned>(x) - static_cast<unsigned>(y);
-  return days{ diff <= 6 ? diff : diff + 7 };
-}
-
-CONSTCD14
-inline
-weekday
-operator+(const weekday& x, const days& y) NOEXCEPT
-{
-  auto const wdu = static_cast<long long>(static_cast<unsigned>(x) - 1u) + y.count();
-  auto const wk = (wdu >= 0 ? wdu : wdu - 6) / 7;
-  return weekday{ static_cast<unsigned>(wdu - wk * 7) + 1u };
-}
-
-CONSTCD14
-inline
-weekday
-operator+(const days& x, const weekday& y) NOEXCEPT
-{
-  return y + x;
-}
-
-CONSTCD14
-inline
-weekday
-operator-(const weekday& x, const days& y) NOEXCEPT
-{
-  return x + -y;
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const weekday& wd)
-{
-  switch (static_cast<unsigned>(wd)) {
-  case 7:
-    os << "Sun";
-    break;
-  case 1:
-    os << "Mon";
-    break;
-  case 2:
-    os << "Tue";
-    break;
-  case 3:
-    os << "Wed";
-    break;
-  case 4:
-    os << "Thu";
-    break;
-  case 5:
-    os << "Fri";
-    break;
-  case 6:
-    os << "Sat";
-    break;
-  default:
-    os << static_cast<unsigned>(wd) << " is not a valid weekday";
-    break;
-  }
-  return os;
-}
-
-// year
-
-CONSTCD11 inline year::year(int y) NOEXCEPT : y_(static_cast<decltype(y_)>(y))
-{}
-inline year& year::operator++() NOEXCEPT
-{
-  ++y_; return *this;
-}
-inline year year::operator++(int) NOEXCEPT
-{
-  auto tmp(*this); ++(*this); return tmp;
-}
-inline year& year::operator--() NOEXCEPT
-{
-  --y_; return *this;
-}
-inline year year::operator--(int) NOEXCEPT
-{
-  auto tmp(*this); --(*this); return tmp;
-}
-inline year& year::operator+=(const years& y) NOEXCEPT
-{
-  *this = *this + y; return *this;
-}
-inline year& year::operator-=(const years& y) NOEXCEPT
-{
-  *this = *this - y; return *this;
-}
-
-CONSTCD11 inline year::operator int() const NOEXCEPT
-{
-  return y_;
-}
-CONSTCD11 inline bool year::ok() const NOEXCEPT
-{
-  return min() <= *this && *this <= max();
-}
-
-CONSTCD11
-inline
-year
-year::min() NOEXCEPT
-{
-  using namespace std::chrono;
-  static_assert(sizeof(seconds)*CHAR_BIT >= 41, "seconds may overflow");
-  static_assert(sizeof(hours)*CHAR_BIT >= 30, "hours may overflow");
-  return sizeof(minutes)*CHAR_BIT < 34 ?
-    year{ 1970 } +duration_cast<years>(minutes::min()) :
-    year{ std::numeric_limits<short>::min() };
-}
-
-CONSTCD11
-inline
-year
-year::max() NOEXCEPT
-{
-  using namespace std::chrono;
-  static_assert(sizeof(seconds)*CHAR_BIT >= 41, "seconds may overflow");
-  static_assert(sizeof(hours)*CHAR_BIT >= 30, "hours may overflow");
-  return sizeof(minutes)*CHAR_BIT < 34 ?
-    year{ 1969 } +duration_cast<years>(minutes::max()) :
-    year{ std::numeric_limits<short>::max() };
-}
-
-CONSTCD11
-inline
-bool
-operator==(const year& x, const year& y) NOEXCEPT
-{
-  return static_cast<int>(x) == static_cast<int>(y);
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const year& x, const year& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const year& x, const year& y) NOEXCEPT
-{
-  return static_cast<int>(x) < static_cast<int>(y);
-}
-
-CONSTCD11
-inline
-bool
-operator>(const year& x, const year& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const year& x, const year& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const year& x, const year& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-CONSTCD11
-inline
-years
-operator-(const year& x, const year& y) NOEXCEPT
-{
-  return years{ static_cast<int>(x) - static_cast<int>(y) };
-}
-
-CONSTCD11
-inline
-year
-operator+(const year& x, const years& y) NOEXCEPT
-{
-  return year{ static_cast<int>(x) + y.count() };
-}
-
-CONSTCD11
-inline
-year
-operator+(const years& x, const year& y) NOEXCEPT
-{
-  return y + x;
-}
-
-CONSTCD11
-inline
-year
-operator-(const year& x, const years& y) NOEXCEPT
-{
-  return year{ static_cast<int>(x) - y.count() };
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const year& y)
-{
-  chrono::detail::save_stream _(os);
-  os.fill('0');
-  os.flags(std::ios::dec | std::ios::internal);
-  os.width(4 + (y < year{ 0 }));
-  os << static_cast<int>(y);
-  return os;
-}
-
-#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
-inline namespace literals {
-
-CONSTCD11
-inline
-week::year
-operator "" _y(unsigned long long y) NOEXCEPT
-{
-  return week::year(static_cast<int>(y));
-}
-
-CONSTCD11
-inline
-week::weeknum
-operator "" _w(unsigned long long wn) NOEXCEPT
-{
-  return week::weeknum(static_cast<unsigned>(wn));
-}
-
-#endif  // !defined(_MSC_VER) || (_MSC_VER >= 1900)
-
-CONSTDATA week::last_week last{};
-
-CONSTDATA week::weekday sun{ 7u };
-CONSTDATA week::weekday mon{ 1u };
-CONSTDATA week::weekday tue{ 2u };
-CONSTDATA week::weekday wed{ 3u };
-CONSTDATA week::weekday thu{ 4u };
-CONSTDATA week::weekday fri{ 5u };
-CONSTDATA week::weekday sat{ 6u };
-
-#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
-}  // inline namespace literals
-#endif
-
-   // weeknum
-
-CONSTCD11
-inline
-weeknum::weeknum(unsigned wn) NOEXCEPT
-  : wn_(static_cast<decltype(wn_)>(wn))
-{}
-
-inline weeknum& weeknum::operator++() NOEXCEPT
-{
-  ++wn_; return *this;
-}
-inline weeknum weeknum::operator++(int) NOEXCEPT
-{
-  auto tmp(*this); ++(*this); return tmp;
-}
-inline weeknum& weeknum::operator--() NOEXCEPT
-{
-  --wn_; return *this;
-}
-inline weeknum weeknum::operator--(int) NOEXCEPT
-{
-  auto tmp(*this); --(*this); return tmp;
-}
-
-inline
-weeknum&
-weeknum::operator+=(const weeks& y) NOEXCEPT
-{
-  *this = *this + y;
-  return *this;
-}
-
-inline
-weeknum&
-weeknum::operator-=(const weeks& y) NOEXCEPT
-{
-  *this = *this - y;
-  return *this;
-}
-
-CONSTCD11 inline weeknum::operator unsigned() const NOEXCEPT
-{
-  return wn_;
-}
-CONSTCD11 inline bool weeknum::ok() const NOEXCEPT
-{
-  return 1 <= wn_ && wn_ <= 53;
-}
-
-CONSTCD11
-inline
-bool
-operator==(const weeknum& x, const weeknum& y) NOEXCEPT
-{
-  return static_cast<unsigned>(x) == static_cast<unsigned>(y);
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const weeknum& x, const weeknum& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const weeknum& x, const weeknum& y) NOEXCEPT
-{
-  return static_cast<unsigned>(x) < static_cast<unsigned>(y);
-}
-
-CONSTCD11
-inline
-bool
-operator>(const weeknum& x, const weeknum& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const weeknum& x, const weeknum& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const weeknum& x, const weeknum& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-CONSTCD11
-inline
-weeks
-operator-(const weeknum& x, const weeknum& y) NOEXCEPT
-{
-  return weeks{ static_cast<weeks::rep>(static_cast<unsigned>(x)) -
-    static_cast<weeks::rep>(static_cast<unsigned>(y)) };
-}
-
-CONSTCD11
-inline
-weeknum
-operator+(const weeknum& x, const weeks& y) NOEXCEPT
-{
-  return weeknum{ static_cast<unsigned>(x) + static_cast<unsigned>(y.count()) };
-}
-
-CONSTCD11
-inline
-weeknum
-operator+(const weeks& x, const weeknum& y) NOEXCEPT
-{
-  return y + x;
-}
-
-CONSTCD11
-inline
-weeknum
-operator-(const weeknum& x, const weeks& y) NOEXCEPT
-{
-  return x + -y;
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const weeknum& wn)
-{
-  chrono::detail::save_stream _(os);
-  os << 'W';
-  os.fill('0');
-  os.flags(std::ios::dec | std::ios::right);
-  os.width(2);
-  os << static_cast<unsigned>(wn);
-  return os;
-}
-
-// year_weeknum
-
-CONSTCD11
-inline
-year_weeknum::year_weeknum(const week::year& y, const week::weeknum& wn) NOEXCEPT
-  : y_(y)
-  , wn_(wn)
-{}
-
-CONSTCD11 inline year year_weeknum::year() const NOEXCEPT
-{
-  return y_;
-}
-CONSTCD11 inline weeknum year_weeknum::weeknum() const NOEXCEPT
-{
-  return wn_;
-}
-CONSTCD11 inline bool year_weeknum::ok() const NOEXCEPT
-{
-  return y_.ok() && 1u <= unsigned{ wn_ } && wn_ <= (y_ / last).weeknum();
-}
-
-inline
-year_weeknum&
-year_weeknum::operator+=(const years& dy) NOEXCEPT
-{
-  *this = *this + dy;
-  return *this;
-}
-
-inline
-year_weeknum&
-year_weeknum::operator-=(const years& dy) NOEXCEPT
-{
-  *this = *this - dy;
-  return *this;
-}
-
-CONSTCD11
-inline
-bool
-operator==(const year_weeknum& x, const year_weeknum& y) NOEXCEPT
-{
-  return x.year() == y.year() && x.weeknum() == y.weeknum();
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const year_weeknum& x, const year_weeknum& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const year_weeknum& x, const year_weeknum& y) NOEXCEPT
-{
-  return x.year() < y.year() ? true
-    : (x.year() > y.year() ? false
-      : (x.weeknum() < y.weeknum()));
-}
-
-CONSTCD11
-inline
-bool
-operator>(const year_weeknum& x, const year_weeknum& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const year_weeknum& x, const year_weeknum& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const year_weeknum& x, const year_weeknum& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-CONSTCD11
-inline
-year_weeknum
-operator+(const year_weeknum& ym, const years& dy) NOEXCEPT
-{
-  return (ym.year() + dy) / ym.weeknum();
-}
-
-CONSTCD11
-inline
-year_weeknum
-operator+(const years& dy, const year_weeknum& ym) NOEXCEPT
-{
-  return ym + dy;
-}
-
-CONSTCD11
-inline
-year_weeknum
-operator-(const year_weeknum& ym, const years& dy) NOEXCEPT
-{
-  return ym + -dy;
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const year_weeknum& ywn)
-{
-  return os << ywn.year() << '-' << ywn.weeknum();
-}
-
-
-// year_lastweek
-
-CONSTCD11
-inline
-year_lastweek::year_lastweek(const week::year& y) NOEXCEPT
-  : y_(y)
-{}
-
-CONSTCD11 inline year year_lastweek::year() const NOEXCEPT
-{
-  return y_;
-}
-
-CONSTCD14
-inline
-weeknum
-year_lastweek::weeknum() const NOEXCEPT
-{
-  const auto y = chrono::year{ int{ y_ } };
-  const auto s0 = day_point{ (y - years{ 1 }) / 12 / chrono::thu[chrono::last] };
-  const auto s1 = day_point{ y / 12 / chrono::thu[chrono::last] };
-  return week::weeknum(chrono::trunc<weeks>(s1 - s0).count());
-}
-
-CONSTCD11 inline bool year_lastweek::ok() const NOEXCEPT
-{
-  return y_.ok();
-}
-
-inline
-year_lastweek&
-year_lastweek::operator+=(const years& dy) NOEXCEPT
-{
-  *this = *this + dy;
-  return *this;
-}
-
-inline
-year_lastweek&
-year_lastweek::operator-=(const years& dy) NOEXCEPT
-{
-  *this = *this - dy;
-  return *this;
-}
-
-CONSTCD11
-inline
-bool
-operator==(const year_lastweek& x, const year_lastweek& y) NOEXCEPT
-{
-  return x.year() == y.year();
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const year_lastweek& x, const year_lastweek& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const year_lastweek& x, const year_lastweek& y) NOEXCEPT
-{
-  return x.year() < y.year();
-}
-
-CONSTCD11
-inline
-bool
-operator>(const year_lastweek& x, const year_lastweek& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const year_lastweek& x, const year_lastweek& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const year_lastweek& x, const year_lastweek& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-CONSTCD11
-inline
-year_lastweek
-operator+(const year_lastweek& ym, const years& dy) NOEXCEPT
-{
-  return year_lastweek{ ym.year() + dy };
-}
-
-CONSTCD11
-inline
-year_lastweek
-operator+(const years& dy, const year_lastweek& ym) NOEXCEPT
-{
-  return ym + dy;
-}
-
-CONSTCD11
-inline
-year_lastweek
-operator-(const year_lastweek& ym, const years& dy) NOEXCEPT
-{
-  return ym + -dy;
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const year_lastweek& ywn)
-{
-  return os << ywn.year() << "-W last";
-}
-
-// weeknum_weekday
-
-CONSTCD11
-inline
-weeknum_weekday::weeknum_weekday(const week::weeknum& wn,
-  const week::weekday& wd) NOEXCEPT
-  : wn_(wn)
-  , wd_(wd)
-{}
-
-CONSTCD11 inline weeknum weeknum_weekday::weeknum() const NOEXCEPT
-{
-  return wn_;
-}
-CONSTCD11 inline weekday weeknum_weekday::weekday() const NOEXCEPT
-{
-  return wd_;
-}
-
-CONSTCD14
-inline
-bool
-weeknum_weekday::ok() const NOEXCEPT
-{
-  return wn_.ok() && wd_.ok();
-}
-
-CONSTCD11
-inline
-bool
-operator==(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT
-{
-  return x.weeknum() == y.weeknum() && x.weekday() == y.weekday();
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT
-{
-  return x.weeknum() < y.weeknum() ? true
-    : (x.weeknum() > y.weeknum() ? false
-      : (unsigned{ x.weekday() } < unsigned{ y.weekday() }));
-}
-
-CONSTCD11
-inline
-bool
-operator>(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const weeknum_weekday& x, const weeknum_weekday& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const weeknum_weekday& md)
-{
-  return os << md.weeknum() << '-' << md.weekday();
-}
-
-// lastweek_weekday
-
-CONSTCD11
-inline
-lastweek_weekday::lastweek_weekday(const week::weekday& wd) NOEXCEPT
-  : wd_(wd)
-{}
-
-CONSTCD11 inline weekday lastweek_weekday::weekday() const NOEXCEPT
-{
-  return wd_;
-}
-
-CONSTCD14
-inline
-bool
-lastweek_weekday::ok() const NOEXCEPT
-{
-  return wd_.ok();
-}
-
-CONSTCD11
-inline
-bool
-operator==(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT
-{
-  return x.weekday() == y.weekday();
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT
-{
-  return unsigned{ x.weekday() } < unsigned{ y.weekday() };
-}
-
-CONSTCD11
-inline
-bool
-operator>(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const lastweek_weekday& x, const lastweek_weekday& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const lastweek_weekday& md)
-{
-  return os << "W last-" << md.weekday();
-}
-
-// year_lastweek_weekday
-
-CONSTCD11
-inline
-year_lastweek_weekday::year_lastweek_weekday(const week::year& y,
-  const week::weekday& wd) NOEXCEPT
-  : y_(y)
-  , wd_(wd)
-{}
-
-inline
-year_lastweek_weekday&
-year_lastweek_weekday::operator+=(const years& y) NOEXCEPT
-{
-  *this = *this + y;
-  return *this;
-}
-
-inline
-year_lastweek_weekday&
-year_lastweek_weekday::operator-=(const years& y) NOEXCEPT
-{
-  *this = *this - y;
-  return *this;
-}
-
-CONSTCD11 inline year year_lastweek_weekday::year() const NOEXCEPT
-{
-  return y_;
-}
-
-CONSTCD11
-inline
-weeknum
-year_lastweek_weekday::weeknum() const NOEXCEPT
-{
-  return (y_ / last).weeknum();
-}
-
-CONSTCD11 inline weekday year_lastweek_weekday::weekday() const NOEXCEPT
-{
-  return wd_;
-}
-
-CONSTCD14
-inline
-year_lastweek_weekday::operator day_point() const NOEXCEPT
-{
-  return day_point{ chrono::year{ int{ y_ } } / chrono::dec / chrono::thu[chrono::last] } +(mon - thu)
-    - (mon - wd_);
-}
-
-CONSTCD11
-inline
-bool
-year_lastweek_weekday::ok() const NOEXCEPT
-{
-  return y_.ok() && wd_.ok();
-}
-
-CONSTCD11
-inline
-bool
-operator==(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT
-{
-  return x.year() == y.year() && x.weekday() == y.weekday();
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT
-{
-  return x.year() < y.year() ? true
-    : (x.year() > y.year() ? false
-      : (unsigned{ x.weekday() } < unsigned{ y.weekday() }));
-}
-
-CONSTCD11
-inline
-bool
-operator>(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const year_lastweek_weekday& x, const year_lastweek_weekday& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-CONSTCD11
-inline
-year_lastweek_weekday
-operator+(const year_lastweek_weekday& ywnwd, const years& y)  NOEXCEPT
-{
-  return (ywnwd.year() + y) / last / ywnwd.weekday();
-}
-
-CONSTCD11
-inline
-year_lastweek_weekday
-operator+(const years& y, const year_lastweek_weekday& ywnwd)  NOEXCEPT
-{
-  return ywnwd + y;
-}
-
-CONSTCD11
-inline
-year_lastweek_weekday
-operator-(const year_lastweek_weekday& ywnwd, const years& y)  NOEXCEPT
-{
-  return ywnwd + -y;
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const year_lastweek_weekday& ywnwd)
-{
-  return os << ywnwd.year() << "-W last-" << ywnwd.weekday();
-}
-
-// year_weeknum_weekday
-
-CONSTCD11
-inline
-year_weeknum_weekday::year_weeknum_weekday(const week::year& y,
-  const week::weeknum& wn,
-  const week::weekday& wd) NOEXCEPT
-  : y_(y)
-  , wn_(wn)
-  , wd_(wd)
-{}
-
-CONSTCD14
-inline
-year_weeknum_weekday::year_weeknum_weekday(const year_lastweek_weekday& ylwwd) NOEXCEPT
-  : y_(ylwwd.year())
-  , wn_(ylwwd.weeknum())
-  , wd_(ylwwd.weekday())
-{}
-
-CONSTCD14
-inline
-year_weeknum_weekday::year_weeknum_weekday(const day_point& dp) NOEXCEPT
-  : year_weeknum_weekday(from_day_point(dp))
-{}
-
-inline
-year_weeknum_weekday&
-year_weeknum_weekday::operator+=(const years& y) NOEXCEPT
-{
-  *this = *this + y;
-  return *this;
-}
-
-inline
-year_weeknum_weekday&
-year_weeknum_weekday::operator-=(const years& y) NOEXCEPT
-{
-  *this = *this - y;
-  return *this;
-}
-
-CONSTCD11 inline year year_weeknum_weekday::year() const NOEXCEPT
-{
-  return y_;
-}
-CONSTCD11 inline weeknum year_weeknum_weekday::weeknum() const NOEXCEPT
-{
-  return wn_;
-}
-CONSTCD11 inline weekday year_weeknum_weekday::weekday() const NOEXCEPT
-{
-  return wd_;
-}
-
-CONSTCD14
-inline
-year_weeknum_weekday::operator day_point() const NOEXCEPT
-{
-  return day_point{ chrono::year{ int{ y_ }-1 } / chrono::dec / chrono::thu[chrono::last] }
-  +(chrono::mon - chrono::thu) + weeks{ unsigned{ wn_ }-1 } +(wd_ - mon);
-}
-
-CONSTCD14
-inline
-bool
-year_weeknum_weekday::ok() const NOEXCEPT
-{
-  return y_.ok() && wd_.ok() && week::weeknum{ 1u } <= wn_ && wn_ <= year_lastweek{ y_ }.weeknum();
-}
-
-CONSTCD14
-inline
-year_weeknum_weekday
-year_weeknum_weekday::from_day_point(const day_point& dp) NOEXCEPT
-{
-  const auto wd = week::weekday{ dp };
-  auto y = chrono::year_month_day{ dp + days{ 3 } }.year();
-  auto start = day_point{ (y - chrono::years{ 1 }) / chrono::dec / chrono::thu[chrono::last] } +(mon - thu);
-  if (dp < start) {
-    --y;
-    start = day_point{ (y - chrono::years{ 1 }) / chrono::dec / chrono::thu[chrono::last] } +(mon - thu);
-  }
-  const auto wn = week::weeknum(chrono::trunc<weeks>(dp - start).count() + 1);
-  return{ week::year(int{ y }), wn, wd };
-}
-
-CONSTCD11
-inline
-bool
-operator==(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT
-{
-  return x.year() == y.year() && x.weeknum() == y.weeknum() && x.weekday() == y.weekday();
-}
-
-CONSTCD11
-inline
-bool
-operator!=(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT
-{
-  return !(x == y);
-}
-
-CONSTCD11
-inline
-bool
-operator<(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT
-{
-  return x.year() < y.year() ? true
-    : (x.year() > y.year() ? false
-      : (x.weeknum() < y.weeknum() ? true
-        : (x.weeknum() > y.weeknum() ? false
-          : (unsigned{ x.weekday() } < unsigned{ y.weekday() }))));
-}
-
-CONSTCD11
-inline
-bool
-operator>(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT
-{
-  return y < x;
-}
-
-CONSTCD11
-inline
-bool
-operator<=(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT
-{
-  return !(y < x);
-}
-
-CONSTCD11
-inline
-bool
-operator>=(const year_weeknum_weekday& x, const year_weeknum_weekday& y) NOEXCEPT
-{
-  return !(x < y);
-}
-
-CONSTCD11
-inline
-year_weeknum_weekday
-operator+(const year_weeknum_weekday& ywnwd, const years& y)  NOEXCEPT
-{
-  return (ywnwd.year() + y) / ywnwd.weeknum() / ywnwd.weekday();
-}
-
-CONSTCD11
-inline
-year_weeknum_weekday
-operator+(const years& y, const year_weeknum_weekday& ywnwd)  NOEXCEPT
-{
-  return ywnwd + y;
-}
-
-CONSTCD11
-inline
-year_weeknum_weekday
-operator-(const year_weeknum_weekday& ywnwd, const years& y)  NOEXCEPT
-{
-  return ywnwd + -y;
-}
-
-inline
-std::ostream&
-operator<<(std::ostream& os, const year_weeknum_weekday& ywnwd)
-{
-  return os << ywnwd.year() << '-' << ywnwd.weeknum() << '-' << ywnwd.weekday();
-}
-
-// date composition operators
-
-CONSTCD11
-inline
-year_weeknum
-operator/(const year& y, const weeknum& wn) NOEXCEPT
-{
-  return{ y, wn };
-}
-
-CONSTCD11
-inline
-year_weeknum
-operator/(const year& y, int wn) NOEXCEPT
-{
-  return y / weeknum(wn);
-}
-
-CONSTCD11
-inline
-year_lastweek
-operator/(const year& y, last_week) NOEXCEPT
-{
-  return year_lastweek{ y };
-}
-
-CONSTCD11
-inline
-weeknum_weekday
-operator/(const weeknum& wn, const weekday& wd) NOEXCEPT
-{
-  return{ wn, wd };
-}
-
-CONSTCD11
-inline
-weeknum_weekday
-operator/(const weeknum& wn, int wd) NOEXCEPT
-{
-  return wn / weekday{ static_cast<unsigned>(wd) };
-}
-
-CONSTCD11
-inline
-weeknum_weekday
-operator/(const weekday& wd, const weeknum& wn) NOEXCEPT
-{
-  return wn / wd;
-}
-
-CONSTCD11
-inline
-weeknum_weekday
-operator/(const weekday& wd, int wn) NOEXCEPT
-{
-  return weeknum{ static_cast<unsigned>(wn) } / wd;
-}
-
-CONSTCD11
-inline
-lastweek_weekday
-operator/(const last_week&, const weekday& wd) NOEXCEPT
-{
-  return lastweek_weekday{ wd };
-}
-
-CONSTCD11
-inline
-lastweek_weekday
-operator/(const last_week& wn, int wd) NOEXCEPT
-{
-  return wn / weekday{ static_cast<unsigned>(wd) };
-}
-
-CONSTCD11
-inline
-lastweek_weekday
-operator/(const weekday& wd, const last_week& wn) NOEXCEPT
-{
-  return wn / wd;
-}
-
-CONSTCD11
-inline
-year_weeknum_weekday
-operator/(const year_weeknum& ywn, const weekday& wd) NOEXCEPT
-{
-  return{ ywn.year(), ywn.weeknum(), wd };
-}
-
-CONSTCD11
-inline
-year_weeknum_weekday
-operator/(const year_weeknum& ywn, int wd) NOEXCEPT
-{
-  return ywn / weekday(static_cast<unsigned>(wd));
-}
-
-CONSTCD11
-inline
-year_weeknum_weekday
-operator/(const weeknum_weekday& wnwd, const year& y) NOEXCEPT
-{
-  return{ y, wnwd.weeknum(), wnwd.weekday() };
-}
-
-CONSTCD11
-inline
-year_weeknum_weekday
-operator/(const weeknum_weekday& wnwd, int y) NOEXCEPT
-{
-  return wnwd / year{ y };
-}
-
-CONSTCD11
-inline
-year_lastweek_weekday
-operator/(const year_lastweek& ylw, const weekday& wd) NOEXCEPT
-{
-  return{ ylw.year(), wd };
-}
-
-CONSTCD11
-inline
-year_lastweek_weekday
-operator/(const year_lastweek& ylw, int wd) NOEXCEPT
-{
-  return ylw / weekday(static_cast<unsigned>(wd));
-}
-
-CONSTCD11
-inline
-year_lastweek_weekday
-operator/(const lastweek_weekday& lwwd, const year& y) NOEXCEPT
-{
-  return{ y, lwwd.weekday() };
-}
-
-CONSTCD11
-inline
-year_lastweek_weekday
-operator/(const lastweek_weekday& lwwd, int y) NOEXCEPT
-{
-  return lwwd / year{ y };
-}
-
-}  // namespace week
-}  // namespace chrono
+}  // namespace date
 }  // namespace ice
+
+#endif  // DATE_H

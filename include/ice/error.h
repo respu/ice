@@ -10,12 +10,12 @@
 
 namespace ice {
 
-template<typename T>
+template <typename T>
 class error : public exception, public T {
 public:
   using manipulator = std::ostream& (*)(std::ostream&);
 
-  template<typename... Args>
+  template <typename... Args>
   explicit error(Args&&... args) : T(std::forward<Args>(args)...)
   {}
 
@@ -25,7 +25,7 @@ public:
   error& operator=(error&& other) = default;
   error& operator=(const error& other) = default;
 
-  template<typename V>
+  template <typename V>
   error& operator<<(V&& v)
   {
     std::ostringstream oss;

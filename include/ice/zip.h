@@ -108,11 +108,11 @@ private:
 //  ice::log::info() << src.str() << " (" << unzip.size() << " files)";
 //  unzip.list([&](const ice::zip_file& file)
 //  {
-//    auto dp = ice::chrono::floor<ice::date::days>(file.tp);
+//    auto dp = date::floor<date::days>(file.tp);
 //    auto tp = file.tp - dp;
 //    
-//    auto date = ice::date::year_month_day(dp);
-//    auto time = ice::date::make_time(tp);
+//    auto date = date::year_month_day(dp);
+//    auto time = date::make_time(tp);
 //
 //    if (file.name == "html/index.html") {
 //      ice::log::notice() << date << " " << time << " " << "\"" << file.name << "\" (" << file.size << " bytes)";

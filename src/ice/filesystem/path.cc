@@ -23,7 +23,8 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <ice/filesystem/path.h>
-#include <ice/chrono.h>
+#include <ice/date.h>
+#include <ice/utf8.h>
 #include <cctype>
 #include <memory>
 #include <sstream>
@@ -31,6 +32,7 @@
 
 #if defined(_WIN32)
 #include <windows.h>
+#include <shlwapi.h>
 #else
 #include <unistd.h>
 #endif
@@ -155,6 +157,12 @@ path path::make_absolute() const
   return path(temp);
 #else
   std::wstring value = wstr(), out(MAX_PATH, '\0');
+  if (PathIsRelative(value.c_str())) {
+    std::wstring current;
+    current.resize(GetCurrentDirectory(0, &current[0]));
+    current.resize(GetCurrentDirectory(static_cast<DWORD>(current.size()), &current[0]));
+    value = current + L"\\" + value;
+  }
   DWORD length = GetFullPathNameW(value.c_str(), MAX_PATH, &out[0], NULL);
   if (length == 0) {
     throw std::runtime_error("Internal error in realpath(): " + std::to_string(GetLastError()));
@@ -417,9 +425,9 @@ path::clock::time_point path::modified() const
 
   SYSTEMTIME st = {};
   if (ok && FileTimeToSystemTime(&ft, &st)) {
-    auto day = ice::chrono::year(st.wYear) / ice::chrono::month(st.wMonth) / ice::chrono::day(st.wDay);
+    auto day = date::year(st.wYear) / date::month(st.wMonth) / date::day(st.wDay);
     auto tod = std::chrono::hours(st.wHour) + std::chrono::minutes(st.wMinute) + std::chrono::seconds(st.wSecond);
-    return clock::time_point(ice::chrono::day_point(day)) + tod;
+    return clock::time_point(date::day_point(day)) + tod;
   }
 #else
   struct stat attrib;

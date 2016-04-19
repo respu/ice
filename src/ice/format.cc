@@ -553,7 +553,6 @@ const uint64_t ice::internal::BasicData<T>::POWERS_OF_10_64[] = {
 
 FMT_FUNC void ice::internal::report_unknown_type(char code, const char *type)
 {
-  (void)type;
   if (std::isprint(static_cast<unsigned char>(code))) {
     FMT_THROW(ice::FormatError(
       ice::format("unknown format code '{}' for {}", code, type)));
@@ -771,7 +770,6 @@ template <typename Char>
 Arg ice::internal::PrintfFormatter<Char>::get_arg(
   const Char *s, unsigned arg_index)
 {
-  (void)s;
   const char *error = 0;
   Arg arg = arg_index == UINT_MAX ?
     next_arg(error) : FormatterBase::get_arg(arg_index - 1, error);

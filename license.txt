@@ -142,6 +142,10 @@ https://howardhinnant.github.io/date_v2.html
 
 include/ice/date.h
 include/ice/week.h
+include/ice/date/tz.h
+src/ice/date/tz.cc
+src/ice/date/tz.h
+src/ice/date/tz_private.h
 
 The MIT License (MIT)
 

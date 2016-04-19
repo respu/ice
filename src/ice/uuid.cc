@@ -34,6 +34,18 @@ uuid::uuid(const data_type& data)
   thv = giant::letoh(thv);
 }
 
+uuid::uuid(const std::uint8_t* data, std::size_t size)
+{
+  if (size != 16) {
+    throw std::runtime_error("uuid: blob size error");
+  }
+  auto beg = reinterpret_cast<std::uint8_t*>(this);
+  std::copy(data, data + size, beg);
+  tl = giant::letoh(tl);
+  tm = giant::letoh(tm);
+  thv = giant::letoh(thv);
+}
+
 std::string uuid::str() const
 {
   std::string str;

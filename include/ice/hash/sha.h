@@ -16,10 +16,10 @@ enum class sha_size : std::size_t {
   sha512 = 64
 };
 
-template<sha_size size>
+template <sha_size size>
 using sha_type = std::array<std::uint8_t, static_cast<std::size_t>(size)>;
 
-template<sha_size size>
+template <sha_size size>
 class sha : public base<sha_type<size>, sha<size>> {
 public:
   using value_type = sha_type<size>;

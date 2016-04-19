@@ -35,7 +35,7 @@
 
 namespace ice {
 
-template<typename T>
+template <typename T>
 class array_view {
   static_assert(::std::is_object<T>::value,
     "array_view<T>: T must be an object");
@@ -157,13 +157,13 @@ public:
   constexpr const_reverse_iterator crend() const noexcept { return rend(); }
 };
 
-template<typename T>
+template <typename T>
 constexpr array_view<T> aview(T* p, ::std::size_t n) noexcept
 {
   return array_view<T>(p, n);
 }
 
-template<typename T>
+template <typename T>
 inline void swap(array_view<T>& a, array_view<T>& b) noexcept
 {
   a.swap(b);

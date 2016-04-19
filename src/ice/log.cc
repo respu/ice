@@ -226,6 +226,21 @@ logger& g_logger()
 
 }  // namespace
 
+std::ostream& operator<<(std::ostream& os, log::severity severity)
+{
+  switch (severity) {
+  case log::severity::emergency: return os << "emergency"; break;
+  case log::severity::alert:     return os << "alert"; break;
+  case log::severity::critical:  return os << "critical"; break;
+  case log::severity::error:     return os << "error"; break;
+  case log::severity::warning:   return os << "warning"; break;
+  case log::severity::notice:    return os << "notice"; break;
+  case log::severity::info:      return os << "info"; break;
+  case log::severity::debug:     return os << "debug"; break;
+  }
+  return os << static_cast<int>(severity);
+}
+
 void start()
 {
   g_logger().start();
@@ -343,11 +358,11 @@ void console::write(const ice::log::message& message)
 
 class file::impl {
 public:
-  impl(const ice::filesystem::path& path) :
+  impl(const ice::filesystem::path& path, bool append) :
 #ifdef _WIN32
-    os_(path.wstr(), std::ios::binary)
+    os_(path.wstr(), std::ios::binary | (append ? std::ios::app : 0))
 #else
-    os_(path.str(), std::ios::binary)
+    os_(path.str(), std::ios::binary | (append ? std::ios::app : 0))
 #endif
   {
     if (!os_.good()) {
@@ -365,8 +380,8 @@ private:
   std::ofstream os_;
 };
 
-file::file(const std::string& path, log::severity severity, bool milliseconds) :
-  impl_(std::make_unique<impl>(ice::filesystem::path(path))), severity_(severity), milliseconds_(milliseconds)
+file::file(const std::string& path, log::severity severity, bool milliseconds, bool append) :
+  impl_(std::make_unique<impl>(ice::filesystem::path(path), append)), severity_(severity), milliseconds_(milliseconds)
 {}
 
 void file::write(const log::message& message)

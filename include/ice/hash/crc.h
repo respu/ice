@@ -5,7 +5,7 @@
 namespace ice {
 namespace hash {
 
-template<typename Hash, typename Table>
+template <typename Hash, typename Table>
 class crc : public base<Hash, crc<Hash, Table>> {
 public:
   using value_type = Hash;

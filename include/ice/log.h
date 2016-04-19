@@ -25,6 +25,9 @@ enum class severity {
   debug = 7
 };
 
+// Writes the severity name to the output stream.
+std::ostream& operator<<(std::ostream& os, log::severity severity);
+
 // Log message.
 struct message {
   log::severity severity;
@@ -62,7 +65,7 @@ private:
   timestamp timestamp_ = clock::now();
 };
 
-template<log::severity severity>
+template <log::severity severity>
 class stream_proxy : public stream {
 public:
   stream_proxy() : stream(severity) {}
@@ -105,7 +108,7 @@ private:
 // File output log sink.
 class file : public sink {
 public:
-  file(const std::string& path, log::severity severity = log::severity::debug, bool milliseconds = true);
+  file(const std::string& path, log::severity severity = log::severity::debug, bool milliseconds = true, bool append = true);
   void write(const log::message& message) override;
 private:
   class impl;
